@@ -127,8 +127,15 @@ function render(){
    const unlockText=lockedDayOne?`Day 1 unlocks after your 2-hour action window: ${timeLeftText(unlockMs-(Date.now()-(h.createdAt||0)))}`:(ready?"Today's reflection check is ready after you complete your action.":(h.completed[todayKey]?"Today's habit is completed.":"Challenge window completed."));
    let cells="";
    for(let i=1;i<=21;i++){const d=new Date(h.start);d.setDate(d.getDate()+i-1);const key=dateOnly(d);const isDone=!!h.completed[key], isToday=i===current, future=i>current, missed=i<current&&!isDone, actionLocked=isToday&&!isDone&&lockedDayOne;cells+=`<div class="day ${isDone?'done':''} ${isToday?'today':''} ${future||actionLocked?'locked':''} ${missed?'missed':''}" title="Day ${i}">${i}</div>`;}
-   return `<div class="habit"><div class="habit-top"><div><b>${h.title}</b><br><span class="sub">${h.note||"Started "+h.start}</span></div><div class="habit-score">${done}/21</div></div><div class="progress"><div class="fill" style="width:${Math.min(100,done/21*100)}%"></div></div><div class="criteria">${habitCriteria[baseTitle(h.title)]||habitCriteria.Other} Healthify uses a transparent 3-step reflection check for accountability and does not claim physical verification.</div><div class="unlock">${unlockText}</div><div class="days-wrap"><div class="days">${cells}</div></div><div class="habit-actions"><button class="btn" ${ready?'onclick="openProof('+h.id+')"':'disabled'}>Complete Today's Reflection</button></div><div>${(h.milestones||[]).map(a=>`<span class="milestone">${a}</span>`).join("")}</div></div>`;
+   return `<div class="habit"><div class="habit-top"><div><b>${h.title}</b><br><span class="sub">${h.note||"Started "+h.start}</span></div><div class="habit-score">${done}/21</div></div><div class="progress"><div class="fill" style="width:${Math.min(100,done/21*100)}%"></div></div><div class="criteria">${habitCriteria[baseTitle(h.title)]||habitCriteria.Other} Healthify uses a transparent 3-step reflection check for accountability and does not claim physical verification.</div><div class="unlock">${unlockText}</div><div class="days-wrap"><div class="days">${cells}</div></div><div class="habit-actions" style="display:flex;gap:10px;"><button class="btn" ${ready?'onclick="openProof('+h.id+')"':'disabled'}>Complete Today's Reflection</button><button class="btn" style="background:transparent;color:#ef4444;border:1px solid #ef4444;" onclick="deleteHabit(${h.id})">Delete</button></div><div>${(h.milestones||[]).map(a=>`<span class="milestone">${a}</span>`).join("")}</div></div>`;
  }).join("");
+}
+function deleteHabit(id) {
+    if(confirm("Are you sure you want to delete this habit?")) {
+        habits = habits.filter(h => h.id !== id);
+        save();
+        render();
+    }
 }
 render();setInterval(render,1000);
 window.addEventListener("load",()=>{const key="habitGuideViews:"+dateOnly(todayDate());if(Number(localStorage.getItem(key)||0)<3)setTimeout(openGuide,500);});

@@ -22,7 +22,7 @@ body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient
 <button class="secondary" onclick="hfGo(event,'/home')">Back to Home</button>
 </div></div>
 <script>
-const text="{{ effect|escape }}";let i=0;function type(){if(i<text.length){document.getElementById("typing").innerHTML+=text.charAt(i);i++;setTimeout(type,18);}}type();
+const text={{ effect|tojson|safe }};let i=0;function type(){if(i<text.length){document.getElementById("typing").innerHTML+=text.charAt(i);i++;setTimeout(type,18);}}type();
 function toggleChip(el){el.classList.toggle("done");updateMeter();}
 function updateMeter(){let done=document.querySelectorAll(".chip.done").length;let total=document.querySelectorAll(".chip").length||1;let percent=Math.round((done/total)*90)+10;document.getElementById("fill").style.width=percent+"%";document.getElementById("percent").innerText=percent+"%";}
 </script>
