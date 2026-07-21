@@ -37,79 +37,6 @@ def detect_language(text: str) -> str:
         "acha", "accha", "thik", "theek", "haan", "haa", "kaafi", "bahut",
         "zyada", "abhi", "raat", "subah", "din", "kal", "aaj", "lagta",
         "lagti", "wajah", "thak", "pareshan", "ghabra", "neend", "khana",
-        "pani", "clg", "btao", "bolo", "sunao", "bilkul", "zaroor",
-        "matlab", "samjho", "samajh", "jana", "jaa", "kar", "karo",
-        "hua", "hui", "raha", "rahi", "lena", "dena", "milna",
-        "ho", "se", "ke", "ki", "ko", "me", "mein", "hu", "hoon",
-        "maayke", "sasural", "ghar", "naam", "mast",
-    ]
-    for word in hinglish_markers:
-        if re.search(rf"\b{re.escape(word)}\b", t):
-            return "hinglish"
-    return "english"
-
-
-def detect_language_from_history(user_input: str, history: list) -> str:
-    lang = detect_language(user_input)
-    if lang != "english":
-        return lang
-    if history:
-        for item in reversed(history[-3:]):
-            for key in ("user", "ai"):
-                msg = item.get(key, "")
-                if msg:
-                    l = detect_language(msg)
-                    if l != "english":
-                        return l
-    return lang
-
-
-# =========================================================
-# EMERGENCY DETECTION
-# =========================================================
-_EMERGENCY_PHRASES = [
-    "heart attack", "stroke", "severe bleeding", "difficulty breathing",
-    "can't breathe", "cannot breathe", "chest pain", "chest tightness",
-    "mera chest dab raha", "chest me dard", "saans nahi aa rahi",
-    "saans lene me dikkat", "saans ful rahi", "saans ruk rahi",
-    "behosh", "unconscious", "faint ho gaya", "suicide", "suicidal",
-    "khatam karna chahta", "khatam karna chahti", "jeena nahi chahta",
-    "jeena nahi chahti", "marna chahta", "marna chahti",
-    "jaan dena chahta", "jaan dena chahti", "overdose", "seizure",
-    "fitting aa rahi", "convulsion", "bahut tez bleeding",
-]
-_EMERGENCY_REGEX = [
-    r"\b(khatam|finish)\b.{0,15}\b(karna|kar)\b",
-    r"\b(marna|die)\b.{0,15}\b(chahta|chahti|want)\b",
-    r"\b(saans|breath)\b.{0,10}\b(nahi|nhi|band|ruk)\b",
-    r"\b(chest|seena)\b.{0,10}\b(dard|pain|dab|tight)\b",
-]
-
-def is_emergency(text: str) -> bool:
-    t = text.lower()
-    for phrase in _EMERGENCY_PHRASES:
-        if re.search(rf"\b{re.escape(phrase)}\b", t):
-            return True
-    t_short = t[:200]
-    for pattern in _EMERGENCY_REGEX:
-        try:
-            if re.search(pattern, t_short):
-                return True
-        except re.error:
-            pass
-    return False
-
-
-# =========================================================
-# GREETING DETECTION
-# =========================================================
-_GREETINGS = {
-    "hi", "hii", "hiii", "hello", "hey", "heya", "helo",
-    "namaste", "namaskar", "satsriakal", "assalamualaikum", "adaab",
-    "good morning", "good afternoon", "good evening", "greetings",
-    "sup", "wassup", "yo", "howdy",
-}
-_GREETING_REPLIES = {
     "english": [
         "Hey! 👋 I'm Healthify AI — your health and wellness companion. What's on your mind?",
         "Hi there! 👋 Feel free to ask me anything about your health, symptoms, or wellness.",
@@ -378,7 +305,7 @@ HUMAN INTELLIGENCE: Understand what users are REALLY saying. Respond the way a k
 
 RESPONSE RULES:
 - Max 3 sentences — complete, never trailing off
-- Match the user's current language naturally: English, Hindi, or Hinglish. If the user switches language, switch with them.
+- CRITICAL: You MUST respond in the EXACT same language the user just used. If the user's message is in pure English, you MUST respond in simple, pure English. DO NOT mix Hindi or Hinglish if the user spoke English! If they speak Hinglish, respond in Hinglish.
 - Sound professional, supportive, respectful, and human. Never rude, sarcastic, childish, lazy, or scripted.
 - Never diagnose, guarantee, prescribe medicine, or claim certainty
 - Never invent or assume the user's name. Use a name only if the user clearly provides it in the current conversation.
