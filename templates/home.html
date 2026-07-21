@@ -40,8 +40,8 @@ h1{font-size:52px;line-height:1.04;margin:28px 0 16px;letter-spacing:0}.accent{c
       <div class="kicker">Your AI Wellness Companion</div>
       <h1>Better Health.<br><span class="accent">Smarter You.</span></h1>
       <p class="lead">Healthify uses AI to understand you better and guide you towards a healthier, happier life.</p>
-      <div class="search"><textarea id="searchInput" rows="1" placeholder="Ask MindCare AI about symptoms, stress, sleep, food, or wellness..."></textarea><button id="micBtn" class="mic-btn" title="Speak your symptoms (Hindi/English)"><svg style="width:22px;height:22px" viewBox="0 0 24 24"><path d="M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 14 0h-2zM8 18h8v2H8v-2z" fill="currentColor"/></svg></button><button class="btn" onclick="goAI()">MindCare AI</button></div>
-      <div class="quick-row"><button class="chip" onclick="setQuick('Mujhe fever ho raha hai')">Fever</button><button class="chip" onclick="setQuick('Stress aur overthinking ho rahi hai')">Stress</button><button class="chip" onclick="setQuick('Sleep issue ho rahi hai')">Sleep</button><button class="chip" onclick="setQuick('Pet me gas aur burning ho rahi hai')">Digestion</button><button class="chip" onclick="setQuick('I feel weakness and tiredness')">Weakness</button></div>
+      <div class="search"><textarea id="searchInput" rows="1" placeholder="Ask MindCare AI..."></textarea><button class="btn" onclick="goAI()">MindCare AI</button></div>
+      <div class="quick-row"><button class="chip" onclick="setQuick('I have a fever')">Fever</button><button class="chip" onclick="setQuick('I am feeling stressed and overthinking')">Stress</button><button class="chip" onclick="setQuick('I am having trouble sleeping')">Sleep</button><button class="chip" onclick="setQuick('I have indigestion and acidity')">Digestion</button><button class="chip" onclick="setQuick('I feel weak and tired')">Weakness</button></div>
     </div>
     <div class="hero-art"><img class="hero-img" src="{{ url_for('static', filename='wellness-hero.png') }}" alt="Healthify wellness illustration"><div class="orb o1"><svg><use href="#i-heart"/></svg></div><div class="orb o2"><svg><use href="#i-brain"/></svg></div><div class="orb o3"><svg><use href="#i-moon"/></svg></div><div class="orb o4"><svg><use href="#i-shield"/></svg></div></div>
   </section>
@@ -62,39 +62,15 @@ h1{font-size:52px;line-height:1.04;margin:28px 0 16px;letter-spacing:0}.accent{c
 </main>
 </div>
 <script>
-const input=document.getElementById("searchInput");
-input.addEventListener("input",()=>{input.style.height="60px";input.style.height=input.scrollHeight+"px";});
-function setQuick(text){input.value=text;input.style.height="60px";input.style.height=input.scrollHeight+"px";input.focus();}
-function goAI(){const text=input.value.trim();if(!text){alert("Please enter your health question");return;}hfGo(null,"/ai?q="+encodeURIComponent(text));}
-input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();goAI();}});
-
-const micBtn = document.getElementById("micBtn");
-if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'en-IN'; // Best for Hinglish/Hindi/English
-    recognition.interimResults = false;
-    
-    micBtn.addEventListener('click', () => {
-        if(micBtn.classList.contains('recording')) {
-            recognition.stop();
-        } else {
-            micBtn.classList.add('recording');
-            recognition.start();
-        }
-    });
-    
-    recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        input.value += (input.value ? " " : "") + transcript;
-        input.style.height = "60px";
-        input.style.height = input.scrollHeight + "px";
-    };
-    
-    recognition.onend = () => micBtn.classList.remove('recording');
-    recognition.onerror = () => micBtn.classList.remove('recording');
-} else {
-    micBtn.style.display = 'none';
+const searchInput = document.getElementById("searchInput");
+function setQuick(txt){
+    searchInput.value=txt;
+    goAI();
+}
+function goAI(){
+    const q=searchInput.value.trim();
+    if(!q)return;
+    window.location.href='/ai?q='+encodeURIComponent(q);
 }
 </script>
 </body>
