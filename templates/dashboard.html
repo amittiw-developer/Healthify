@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard | Healthify</title>
+<style>
+*{box-sizing:border-box}
+:root{--ink:#0f2233;--muted:#60708a;--line:#dfe8e4;--green:#10a466;--green2:#16c57a;--blue:#2d7ff9;--purple:#8358e8;--orange:#ff8a1f;--soft:#f7fbf9}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);background:linear-gradient(180deg,#f8fbf9,#eef7f2)}
+.app{width:min(1180px,100%);margin:auto;display:block;min-height:100vh}.side-nav,.dash-top{display:none!important}.side-logo{display:flex;align-items:center;gap:12px;margin-bottom:36px}.side-logo img{width:46px;height:46px;object-fit:contain}.nav-links{display:grid;gap:10px}.nav-links a{text-decoration:none;color:#23384d;font-weight:850;padding:14px;border-radius:13px}.nav-links a.active,.nav-links a:hover{background:#eaf8f0;color:#08784a}.premium-box,.help-box{display:none!important}.layout{padding:28px 22px 72px}.searchbox{width:min(430px,45vw);border:1px solid var(--line);border-radius:16px;background:white;padding:13px 18px;color:#60708a}.upgrade{border:0;border-radius:16px;background:#0b8f53;color:white;padding:13px 22px;font-weight:950}.hero{display:grid;grid-template-columns:1.15fr .85fr;gap:24px;align-items:stretch}.panel,.card{background:white;border:1px solid var(--line);border-radius:18px;box-shadow:0 18px 50px rgba(20,39,31,.07)}.hero-main{padding:32px;position:relative;overflow:hidden}.hero-copy{position:relative;z-index:2;max-width:430px}.welcome{color:#0a9459;font-weight:950}.hero-main h1{margin:12px 0 10px;font-size:42px;line-height:1.12;letter-spacing:0}.sub{margin:0;color:#53647b;line-height:1.7}.art{position:absolute;right:24px;top:38px;width:330px;opacity:.92;z-index:1;pointer-events:none}.art:before{content:"";position:absolute;inset:-18px;border-radius:44px;background:radial-gradient(circle,rgba(255,255,255,.74),rgba(255,255,255,0) 68%);z-index:-1}.art img{width:100%;border-radius:26px;filter:drop-shadow(0 24px 46px rgba(10,148,89,.18));animation:float 5s ease-in-out infinite}@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:138px;position:relative;z-index:2}.metric{border:1px solid color-mix(in srgb,var(--metric) 24%,#dfe8e4);border-radius:16px;padding:18px;background:linear-gradient(145deg,var(--metric),var(--metric2));box-shadow:0 18px 40px color-mix(in srgb,var(--metric) 22%,transparent);color:white;min-width:0;position:relative;overflow:hidden}.metric .top{display:flex;align-items:center;gap:10px}.metric .icon{background:rgba(255,255,255,.22);color:white}.metric .status{color:rgba(255,255,255,.92)}.metric.health{--metric:#0b8f53;--metric2:#19c879}.metric.bmi{--metric:#2d7ff9;--metric2:#60a5fa}.metric.habits{--metric:#8358e8;--metric2:#c056e8}.metric.games{--metric:#ff8a1f;--metric2:#fbbf24}.metric.good{--metric:#0b8f53;--metric2:#19c879}.metric.moderate{--metric:#f59e0b;--metric2:#f97316}.metric.low{--metric:#ef4444;--metric2:#fb7185}.icon{width:38px;height:38px;border-radius:12px;display:grid;place-items:center}.icon svg{width:22px;height:22px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}.green{background:#e8f8ef;color:#08784a}.blue{background:#eaf2ff;color:var(--blue)}.purple{background:#f1ecff;color:var(--purple)}.orange{background:#fff1df;color:var(--orange)}.num{font-size:32px;font-weight:950;margin-top:16px;line-height:1.08;white-space:nowrap;word-break:keep-all;overflow-wrap:normal}.num small{font-size:.48em;font-weight:850;margin-left:2px}.status{font-size:13px;font-weight:850;color:#0a9459}.spark{height:28px;margin-top:14px;border-bottom:3px solid currentColor;border-radius:50%;opacity:.78;background:rgba(255,255,255,.16)}
+.metric.health::after{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle,rgba(255,255,255,0.15) 0%,transparent 60%);animation:pulse-bg 3s infinite ease-in-out;pointer-events:none}@keyframes pulse-bg{0%,100%{transform:scale(0.8);opacity:0.2}50%{transform:scale(1.1);opacity:0.8}}.metric.health .icon{animation:heartbeat 1.5s infinite}@keyframes heartbeat{0%,100%,30%,60%{transform:scale(1)}15%,45%{transform:scale(1.15)}}.metric.health.good .icon{animation-duration:2s}.metric.health.moderate .icon{animation-duration:1s}.metric.health.low .icon{animation-duration:0.5s}
+.focus{padding:24px}.focus-head{display:flex;justify-content:space-between;font-weight:950}.tasks{display:grid;gap:12px;margin-top:16px}.task{display:grid;grid-template-columns:auto 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:13px;padding:14px;cursor:pointer;background:linear-gradient(135deg,#fff,#fbfefd)}.check{width:22px;height:22px;border-radius:50%;background:#eaf8f0;color:var(--green);display:grid;place-items:center;font-size:13px;font-weight:950}.task b{display:block}.task span{font-size:12px;color:#60708a}.progress{margin-top:26px}.progress-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}.bar{height:10px;border-radius:999px;background:#e8f0ec;overflow:hidden}.fill{height:100%;background:linear-gradient(90deg,#0b8f53,#16c57a);width:var(--progress,0%)}.rhythm{margin-top:22px;border:1px solid #cdebdc;background:#f2fbf6;border-radius:14px;padding:18px;color:#08784a}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:24px}.card{padding:22px;min-height:178px;text-align:left;cursor:pointer;position:relative;overflow:hidden}.card h3{margin:0 0 10px}.card p{margin:0 0 16px;color:#53647b;line-height:1.55}.btn{border:0;border-radius:10px;background:#0b8f53;color:white;padding:10px 14px;font-weight:900;cursor:pointer}.wellness{margin-top:24px;border:1px solid #cdebdc;background:#f2fbf6;border-radius:18px;padding:22px}.wellness-head{display:flex;justify-content:space-between;gap:14px;align-items:center}.insights{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:16px}.insight{background:white;border:1px solid var(--line);border-radius:13px;padding:14px;display:flex;gap:10px;align-items:center}.mobile-tabs{display:none;position:fixed;left:12px;right:12px;bottom:10px;background:white;border:1px solid var(--line);border-radius:18px;box-shadow:0 14px 40px rgba(20,39,31,.14);grid-template-columns:repeat(5,1fr);padding:8px;z-index:50}.mobile-tabs a{text-decoration:none;color:#53647b;text-align:center;font-size:11px;font-weight:850}
+@media(max-width:1100px){.layout{padding:22px 14px 86px}.hero,.grid,.insights{grid-template-columns:1fr}.art{position:relative;right:auto;top:auto;width:100%;max-width:330px;margin:18px auto 0}.hero-copy{max-width:none}.metrics{margin-top:24px;grid-template-columns:repeat(2,1fr)}.hero-main h1{font-size:36px}}
+@media(max-width:560px){.hero-main,.focus{padding:20px}.metrics{grid-template-columns:1fr 1fr;gap:10px}.metric{padding:14px;min-width:0}.num{font-size:26px}.card{min-height:auto}.wellness-head{display:block}.mobile-tabs{display:grid}.art{display:none}.task{padding:12px;grid-template-columns:auto 1fr auto}.focus-head{font-size:14px}.insight{align-items:flex-start}}
+</style>
+</head>
+<body>
+{% include 'header.html' %}
+<svg width="0" height="0" style="position:absolute">
+<symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.6l-1-1a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></symbol><symbol id="i-brain" viewBox="0 0 24 24"><path d="M9 4a4 4 0 0 0-4 4v8a4 4 0 0 0 4 4M15 4a4 4 0 0 1 4 4v8a4 4 0 0 1-4 4M9 8h6M9 12h6M9 16h6"/></symbol><symbol id="i-game" viewBox="0 0 24 24"><path d="M7 15H5a4 4 0 0 1 0-8h14a4 4 0 0 1 0 8h-2l-3-3h-4z"/><path d="M8 10v4M6 12h4M16 11h.01M18 13h.01"/></symbol><symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s7 7 7 12a7 7 0 0 1-14 0c0-5 7-12 7-12z"/></symbol><symbol id="i-run" viewBox="0 0 24 24"><circle cx="13" cy="4" r="2"/><path d="m9 21 3-6-3-3 4-4 2 3h4M15 21l-3-6"/></symbol><symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5z"/></symbol><symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h9l3 3v15H6z"/><path d="M14 3v4h4M9 12h6M9 16h6"/></symbol><symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.8-4 14.2-4 16 0"/></symbol>
+</svg>
+<div class="app">
+<aside class="side-nav">
+  <div class="side-logo"><img src="{{ url_for('static', filename='logo-icon.png') }}" alt=""><div><b>Healthify</b><br><small>AI Powered Wellness</small></div></div>
+  <nav class="nav-links"><a href="/home">Home</a><a href="/ai">MindCare AI</a><a href="/userdetails">Health Report</a><a class="active" href="/dashboard">Dashboard</a><a href="/habits">Habits</a><a href="/games">Games</a><a href="/profile">Profile</a></nav>
+</aside>
+<main class="layout">
+  <div class="dash-top"><div class="searchbox">Search anything...</div></div>
+  <section class="hero">
+    <div class="panel hero-main">
+      <div class="hero-copy">
+      <div class="welcome">Welcome back, {{ profile.get('name') or session.get('user','Healthify User') }}!</div>
+      <h1>Your Healthify<br>Dashboard</h1>
+      <p class="sub">Track your health, build better habits, and achieve a balanced life.</p>
+      </div>
+      <div class="art"><img src="{{ url_for('static', filename='wellness-hero.png') }}" alt="Wellness dashboard illustration"></div>
+      <div class="metrics">
+        {% set score_val = result.get('score')|int if result.get('score') is not none else 0 %}
+        {% set score_class = 'good' if score_val >= 75 else ('moderate' if score_val >= 45 else 'low') %}
+        <div class="metric health {{ score_class }}"><div class="top"><span class="icon"><svg><use href="#i-heart"/></svg></span><b>Health Score</b></div><div class="num">{{ result.get('score') if result.get('score') is not none else '--' }}<small>/100</small></div><div class="status">{{ result.get('condition') or 'Check score to update' }}</div><div class="spark"></div></div>
+        <div class="metric bmi"><div class="top"><span class="icon"><svg><use href="#i-file"/></svg></span><b>BMI</b></div><div class="num">{{ profile.get('bmi') or '--' }}</div><div class="status">{{ profile.get('bmi_status') or 'Complete profile' }}</div><div class="spark"></div></div>
+        <div class="metric habits"><div class="top"><span class="icon"><svg><use href="#i-drop"/></svg></span><b>Active Habits</b></div><div class="num">{{ habits|length }}<small>/21</small></div><div class="status">{{ 'On Track' if habits|length else 'Create a habit' }}</div><div class="spark"></div></div>
+        <div class="metric games"><div class="top"><span class="icon"><svg><use href="#i-game"/></svg></span><b>Game Streak</b></div><div class="num" id="gameStreakNum">{{ games.get('streak') or 0 }}</div><div class="status">{{ 'Keep it up!' if games.get('streak') else 'Play to start' }}</div><div class="spark"></div></div>
+      </div>
+    </div>
+    <aside class="panel focus">
+      <div class="focus-head"><span>Today's Focus</span><span style="color:#0a9459">Live checklist</span></div>
+      <div class="tasks">
+        <div class="task" onclick="hfGo(event,'/ai')"><span class="check">1</span><div><b>Ask MindCare AI</b><span>Clear one health doubt responsibly.</span></div><span>&rsaquo;</span></div>
+        <div class="task" onclick="hfGo(event,'/habits')"><span class="check">2</span><div><b>Log one habit</b><span>Tiny consistency beats pressure.</span></div><span>&rsaquo;</span></div>
+        <div class="task" onclick="hfGo(event,'/games')"><span class="check">3</span><div><b>Play one health game</b><span>Keep daily engagement light and useful.</span></div><span>&rsaquo;</span></div>
+      </div>
+      <div class="progress" style="--progress:{{ score_val }}%"><div class="progress-head"><b>Daily Progress</b><span>{{ score_val }}%</span></div><div class="bar"><div class="fill"></div></div></div>
+      <div class="rhythm"><b>Gentle daily rhythm</b><br><span>Use check-ins, habits, and games as simple wellness signals. No pressure, no rewards chasing.</span></div>
+    </aside>
+  </section>
+  <section class="grid">
+    <div class="card" onclick="hfGo(event,'/ai')"><span class="icon green"><svg><use href="#i-brain"/></svg></span><h3>MindCare AI</h3><p>Human-friendly wellness guidance with safe boundaries.</p><button class="btn">Open AI</button></div>
+    <div class="card" onclick="hfGo(event,'/habits')"><span class="icon blue"><svg><use href="#i-file"/></svg></span><h3>21-Day Habit Builder</h3><p>A starter challenge for healthier routines and consistency.</p><button class="btn">Build Habit</button></div>
+    <div class="card" onclick="hfGo(event,'/games')"><span class="icon orange"><svg><use href="#i-game"/></svg></span><h3>Healthify Games</h3><p>Brain, focus, breathing, and wellness games.</p><button class="btn">Play Games</button></div>
+    <div class="card" onclick="hfGo(event,'/userdetails')"><span class="icon green"><svg><use href="#i-file"/></svg></span><h3>Full Health Report</h3><p>Generate a safe awareness report based on symptoms and context.</p><button class="btn">Generate Report</button></div>
+    <div class="card" onclick="hfGo(event,'/health-score')"><span class="icon blue"><svg><use href="#i-heart"/></svg></span><h3>Quick Health Score</h3><p>Check sleep, hydration, activity, and symptoms in seconds.</p><button class="btn">Check Score</button></div>
+    <div class="card" onclick="hfGo(event,'/wellness-age')"><span class="icon purple"><svg><use href="#i-moon"/></svg></span><h3>Wellness Age</h3><p>Explore a lifestyle-based wellness age estimate.</p><button class="btn">Check Age</button></div>
+  </section>
+  <section class="wellness"><div class="wellness-head"><div><b>Your Wellness Insights</b><br><span class="sub">Small steps today, better you tomorrow.</span></div><button class="btn">View All Insights</button></div><div class="insights"><div class="insight"><span class="icon blue"><svg><use href="#i-drop"/></svg></span><div><b>Stay Hydrated</b><br><small>Drink 2-3L water daily</small></div></div><div class="insight"><span class="icon green"><svg><use href="#i-run"/></svg></span><div><b>Move Daily</b><br><small>30 min activity</small></div></div><div class="insight"><span class="icon purple"><svg><use href="#i-moon"/></svg></span><div><b>Sleep Better</b><br><small>7-8 hours sleep</small></div></div><div class="insight"><span class="icon green"><svg><use href="#i-heart"/></svg></span><div><b>Eat Balanced</b><br><small>Whole foods, less sugar</small></div></div></div></section>
+</main>
+</div>
+<nav class="mobile-tabs"><a href="/home">Home</a><a href="/dashboard">Dashboard</a><a href="/habits">Habits</a><a href="/games">Games</a><a href="/profile">Profile</a></nav>
+<script>
+try{const stats=JSON.parse(localStorage.getItem("healthifyGameStatsV2")||localStorage.getItem("healthifyGameStats")||"{}");if(stats&&stats.streak!==undefined){document.getElementById("gameStreakNum").textContent=stats.streak||0;}}catch(e){}
+</script>
+</body>
+</html>
+

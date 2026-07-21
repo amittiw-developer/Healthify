@@ -1,0 +1,71 @@
+/* VIP Premium Light Theme (Startup/Oura Inspired Polish) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+
+body, html {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+}
+
+h1, h2, h3, h4, h5, h6, .welcome, .logo b {
+    font-family: 'Outfit', sans-serif !important;
+    letter-spacing: -0.02em !important;
+}
+
+/* Global Shadow & Border Radius Polish */
+.card, .panel, .tool, .big-card, .metric, .insight, .task, .rhythm, .wellness, .trust, .search, .shell, .step-panel, .options-grid button {
+    border-radius: 20px !important;
+    box-shadow: 0 12px 36px rgba(16, 164, 102, 0.06), 0 4px 12px rgba(0, 0, 0, 0.03) !important;
+    border: 1px solid rgba(16, 164, 102, 0.12) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* Specific Card Hover Effects */
+.card:hover, .tool:hover, .big-card:hover, .task:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 20px 45px rgba(16, 164, 102, 0.12), 0 8px 16px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Button Polish */
+.btn, .upgrade, .primary, .continue-btn {
+    border-radius: 14px !important;
+    font-family: 'Outfit', sans-serif !important;
+    letter-spacing: 0.5px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 8px 20px rgba(11, 143, 83, 0.25) !important;
+}
+
+.btn:hover, .upgrade:hover, .primary:hover, .continue-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 25px rgba(11, 143, 83, 0.4) !important;
+    filter: brightness(1.05);
+}
+
+/* Input Polish */
+input, textarea, select {
+    border-radius: 14px !important;
+    background: rgba(16, 164, 102, 0.03) !important;
+    border: 1px solid rgba(16, 164, 102, 0.15) !important;
+    transition: all 0.25s ease !important;
+}
+input:focus, textarea:focus, select:focus {
+    background: #ffffff !important;
+    border-color: #10a466 !important;
+    box-shadow: 0 0 0 4px rgba(16, 164, 102, 0.15) !important;
+    outline: none !important;
+}
+
+/* Ensure Topbar feels premium */
+.hf-topbar {
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+    background: rgba(255, 255, 255, 0.9) !important;
+    border-bottom: 1px solid rgba(16, 164, 102, 0.1) !important;
+}
+
+/* Metrics and Chips */
+.metric {
+    border-radius: 20px !important;
+}
+.chip {
+    border-radius: 999px !important;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.03) !important;
+}

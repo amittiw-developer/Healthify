@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Healthify</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #0f1115;
+            --surface: rgba(255, 255, 255, 0.03);
+            --surface-hover: rgba(255, 255, 255, 0.08);
+            --border: rgba(255, 255, 255, 0.05);
+            --border-active: rgba(46, 204, 113, 0.5);
+            --text-primary: #ffffff;
+            --text-secondary: #94a3b8;
+            --primary: #2ecc71;
+            --primary-glow: rgba(46, 204, 113, 0.3);
+            --gradient: linear-gradient(135deg, #2ecc71 0%, #27ae60 100%);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            animation: pageFadeIn 0.5s ease;
+            transition: opacity 0.4s ease;
+        }
+        @keyframes pageFadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .page-fade-out { opacity: 0 !important; pointer-events: none; }
+
+        /* Ambient Background Orbs */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.4;
+            animation: float 20s infinite ease-in-out;
+            z-index: 0;
+        }
+
+        .orb-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(46, 204, 113, 0.2);
+            top: -10%;
+            left: -10%;
+            animation-delay: 0s;
+        }
+
+        .orb-2 {
+            width: 300px;
+            height: 300px;
+            background: rgba(52, 152, 219, 0.15);
+            bottom: -10%;
+            right: -10%;
+            animation-delay: -5s;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Step Panels */
+        .step-panel {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .step-panel.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        h1, h2, h3 {
+            font-family: 'Outfit', sans-serif;
+            font-weight: 600;
+        }
+
+        .welcome-title {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(to right, #fff, #94a3b8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-align: center;
+        }
+
+        .welcome-subtitle {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 3rem;
+            line-height: 1.6;
+        }
+
+        .btn-primary {
+            display: block;
+            width: 100%;
+            padding: 1rem;
+            background: var(--gradient);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            font-family: 'Outfit', sans-serif;
+            text-align: center;
+            text-decoration: none;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
+        }
+
+        /* Question Styles */
+        .question-header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .question-step {
+            font-size: 0.9rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        .question-title {
+            font-size: 1.8rem;
+            line-height: 1.3;
+        }
+
+        .options-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .option-btn {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            padding: 1.2rem 1.5rem;
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1.05rem;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .option-btn:hover {
+            background: var(--surface-hover);
+            border-color: rgba(255,255,255,0.2);
+            transform: translateY(-2px);
+        }
+
+        .option-btn.selected {
+            border-color: var(--primary);
+            background: rgba(46, 204, 113, 0.1);
+        }
+
+        /* Loader */
+        .loader-panel {
+            text-align: center;
+            padding: 3rem 0;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 3px solid rgba(255,255,255,0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 2rem;
+        }
+
+        @keyframes spin { 
+            to { transform: rotate(360deg); } 
+        }
+
+        /* Result Snapshot */
+        .result-panel {
+            background: rgba(20, 24, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 2.5rem 2rem;
+        }
+
+        .archetype-title {
+            font-size: 2.2rem;
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        .archetype-subtitle {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .insights-list {
+            list-style: none;
+            margin-bottom: 3rem;
+        }
+
+        .insights-list li {
+            position: relative;
+            padding-left: 2rem;
+            margin-bottom: 1.2rem;
+            line-height: 1.5;
+            color: #e2e8f0;
+            font-size: 1.05rem;
+        }
+
+        .insights-list li::before {
+            content: "✨";
+            position: absolute;
+            left: 0;
+            top: 2px;
+            font-size: 1.2rem;
+        }
+        
+        .result-actions {
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+
+    <div class="container">
+        
+        <!-- Intro Step -->
+        <div class="step-panel active" id="step-intro">
+            <h1 class="welcome-title">Healthify</h1>
+            <p class="welcome-subtitle">Welcome to your personal wellness companion. Let's take 60 seconds to understand exactly where you are today, so we can build a better tomorrow.</p>
+            <button class="btn-primary" onclick="nextStep()">Begin Personalization</button>
+        </div>
+
+        <!-- Question 1 -->
+        <div class="step-panel" id="step-1">
+            <div class="question-header">
+                <div class="question-step">Step 1 of 6</div>
+                <h2 class="question-title">What is your primary health focus right now?</h2>
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectOption('q1', 'Energy & Vitality')">Energy & Vitality</button>
+                <button class="option-btn" onclick="selectOption('q1', 'Mental Peace & Focus')">Mental Peace & Focus</button>
+                <button class="option-btn" onclick="selectOption('q1', 'Fitness & Weight')">Fitness & Weight</button>
+                <button class="option-btn" onclick="selectOption('q1', 'General Balance')">General Balance</button>
+            </div>
+        </div>
+
+        <!-- Question 2 -->
+        <div class="step-panel" id="step-2">
+            <div class="question-header">
+                <div class="question-step">Step 2 of 6</div>
+                <h2 class="question-title">How many hours of sleep do you typically get?</h2>
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectOption('q2', 'Under 5 hours')">Under 5 hours (Not enough)</button>
+                <button class="option-btn" onclick="selectOption('q2', '6-7 hours')">6-7 hours (Average)</button>
+                <button class="option-btn" onclick="selectOption('q2', '8+ hours')">8+ hours (Well rested)</button>
+            </div>
+        </div>
+
+        <!-- Question 3 -->
+        <div class="step-panel" id="step-3">
+            <div class="question-header">
+                <div class="question-step">Step 3 of 6</div>
+                <h2 class="question-title">How would you rate your daily stress levels?</h2>
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectOption('q3', 'Low')">Low - I feel calm usually</button>
+                <button class="option-btn" onclick="selectOption('q3', 'Moderate')">Moderate - Busy but manageable</button>
+                <button class="option-btn" onclick="selectOption('q3', 'High')">High - Often overwhelmed</button>
+            </div>
+        </div>
+
+        <!-- Question 4 -->
+        <div class="step-panel" id="step-4">
+            <div class="question-header">
+                <div class="question-step">Step 4 of 6</div>
+                <h2 class="question-title">How is your energy throughout the day?</h2>
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectOption('q4', 'Consistent')">Consistent all day</button>
+                <button class="option-btn" onclick="selectOption('q4', 'Average')">Okay, some dips</button>
+                <button class="option-btn" onclick="selectOption('q4', 'Crashes')">Frequent crashes & fatigue</button>
+            </div>
+        </div>
+
+        <!-- Question 5 -->
+        <div class="step-panel" id="step-5">
+            <div class="question-header">
+                <div class="question-step">Step 5 of 6</div>
+                <h2 class="question-title">How often do you make time for yourself?</h2>
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectOption('q5', 'Daily')">Daily (Self-care is priority)</button>
+                <button class="option-btn" onclick="selectOption('q5', 'Sometimes')">Sometimes (When I find time)</button>
+                <button class="option-btn" onclick="selectOption('q5', 'Rarely')">Rarely (Always busy)</button>
+            </div>
+        </div>
+
+        <!-- Question 6 -->
+        <div class="step-panel" id="step-6">
+            <div class="question-header">
+                <div class="question-step">Step 6 of 6</div>
+                <h2 class="question-title">What is the biggest hurdle to your wellness?</h2>
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="selectOption('q6', 'Time')">Lack of Time</button>
+                <button class="option-btn" onclick="selectOption('q6', 'Motivation')">Lack of Motivation</button>
+                <button class="option-btn" onclick="selectOption('q6', 'Knowledge')">Not sure what to do</button>
+                <button class="option-btn" onclick="selectOption('q6', 'Consistency')">Staying Consistent</button>
+            </div>
+        </div>
+
+        <!-- Loading Step -->
+        <div class="step-panel loader-panel" id="step-loader">
+            <div class="spinner"></div>
+            <h2 class="question-title">Analyzing your profile...</h2>
+            <p class="welcome-subtitle" style="margin-top: 1rem;">Healthify AI is generating your behavioral snapshot.</p>
+        </div>
+
+        <!-- Result Step -->
+        <div class="step-panel" id="step-result">
+            <div class="result-panel">
+                <h3 style="text-align: center; color: var(--text-secondary); text-transform: uppercase; font-size: 0.85rem; letter-spacing: 2px; margin-bottom: 1rem;">Your AI Archetype</h3>
+                <h1 class="archetype-title" id="res-archetype">The Observer</h1>
+                <p class="archetype-subtitle" id="res-subtitle">Connecting the dots of your well-being.</p>
+                
+                <ul class="insights-list" id="res-insights">
+                    <!-- populated by js -->
+                </ul>
+
+                <div class="result-actions">
+                    <button class="btn-primary" style="width:100%; border:0; padding:1.2rem; border-radius:12px; font-weight:700; cursor:pointer;" onclick="finishOnboarding()">Continue to Dashboard</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const answers = {};
+        const steps = ['intro', '1', '2', '3', '4', '5', '6', 'loader', 'result'];
+        let currentStepIndex = 0;
+
+        function showStep(stepId) {
+            document.querySelectorAll('.step-panel').forEach(panel => {
+                panel.classList.remove('active');
+            });
+            const next = document.getElementById(`step-${stepId}`);
+            if (next) {
+                setTimeout(() => next.classList.add('active'), 50);
+            }
+        }
+
+        function nextStep() {
+            if (currentStepIndex < steps.length - 1) {
+                currentStepIndex++;
+                showStep(steps[currentStepIndex]);
+            }
+        }
+
+        function selectOption(question, value) {
+            answers[question] = value;
+            
+            // Highlight selected button logic could go here if we didn't auto-advance
+            
+            if (currentStepIndex === 6) {
+                submitData();
+            } else {
+                // Short delay for better UX
+                setTimeout(() => nextStep(), 250);
+            }
+        }
+
+        async function submitData() {
+            nextStep(); // Shows loader
+            
+            try {
+                const response = await fetch('/api/onboarding-submit', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ answers })
+                });
+                
+                const data = await response.json();
+                
+                if (data.status === 'ok') {
+                    // Populate results
+                    document.getElementById('res-archetype').innerText = data.archetype || "The Focused Explorer";
+                    document.getElementById('res-subtitle').innerText = data.archetype_subtitle || "You are navigating your health steadily.";
+                    
+                    const list = document.getElementById('res-insights');
+                    list.innerHTML = '';
+                    if (data.insights && Array.isArray(data.insights)) {
+                        data.insights.forEach(insight => {
+                            const li = document.createElement('li');
+                            li.innerText = insight;
+                            list.appendChild(li);
+                        });
+                    }
+                    
+                    // Show result
+                    setTimeout(() => nextStep(), 800); // slight artificial delay for effect
+                } else {
+                    finishOnboarding();
+                }
+            } catch (err) {
+                console.error(err);
+                finishOnboarding();
+            }
+        }
+
+        function finishOnboarding() {
+            document.body.classList.add('page-fade-out');
+            setTimeout(() => { window.location.href = '/home'; }, 400);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Access | Healthify</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;font-family:"Segoe UI",Arial,sans-serif;background:#07100d;display:flex;align-items:center;justify-content:center;padding:24px;color:#10201a}.card{width:min(460px,100%);background:white;border-radius:10px;padding:34px;box-shadow:0 30px 90px rgba(0,0,0,.35);animation:up .4s ease}@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}.logo{text-align:center;margin-bottom:18px}.logo img{height:48px}h1{margin:0 0 8px}.sub{color:#60746b;line-height:1.7}label{font-size:13px;font-weight:900}input{width:100%;padding:13px;border:1px solid #dbe9e2;border-radius:8px;margin:7px 0 14px}.btn{width:100%;padding:14px;border:0;border-radius:8px;background:#0f9d58;color:white;font-weight:900}.msg{padding:12px;border-radius:8px;margin-bottom:14px;font-weight:800}.error{background:#fff1f1;color:#b42318}.success{background:#eaf8f0;color:#067244}
+</style>
+</head>
+<body>
+<main class="card">
+    <div class="logo"><img src="{{ url_for('static', filename='logo-banner.png') }}" alt="Healthify"></div>
+    <h1>Healthify Admin</h1>
+    <p class="sub">Temporary restricted access for development testing.</p>
+    {% if error %}<div class="msg error">{{ error }}</div>{% endif %}
+    {% if success %}<div class="msg success">{{ success }}</div>{% endif %}
+    <form method="POST" action="/admin-login">
+        <label>Username</label><input name="username" required>
+        <label>Password</label><input name="password" type="password" required>
+        <button class="btn" type="submit">Enter Admin Mode</button>
+    </form>
+</main>
+{% if redirect_to %}
+<script>setTimeout(()=>{window.location.href="{{ redirect_to }}";},900);</script>
+{% endif %}
+</body>
+</html>

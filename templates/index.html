@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Health Assessment • HealthiFy</title>
+
+<style>
+
+/* GLOBAL */
+body{
+    margin:0;
+    font-family:'Segoe UI', Arial, sans-serif;
+    background:#f4f7f6;
+}
+
+/* HEADER SPACE */
+.page{
+    padding-top:85px;
+}
+
+/* MAIN CARD */
+.wrapper{
+    display:flex;
+    justify-content:center;
+    padding:20px 12px 40px;
+}
+
+.container{
+    width:100%;
+    max-width:680px;
+    background:white;
+    padding:24px 22px;
+    border-radius:16px;
+    box-shadow:0 8px 30px rgba(0,0,0,0.08);
+    animation:fadeUp .4s ease;
+}
+
+/* TITLE */
+.page-title{
+    font-size:24px;
+    font-weight:600;
+    color:#0F9D58;
+    margin-bottom:20px;
+    text-align:center;
+}
+
+/* FORM */
+label{
+    font-weight:600;
+    font-size:14px;
+    color:#333;
+}
+
+input,textarea,select{
+    width:100%;
+    padding:12px;
+    margin:6px 0 16px 0;
+    border:1px solid #dcdcdc;
+    border-radius:10px;
+    font-size:15px;
+    transition:0.2s;
+    background:#fafafa;
+}
+
+input:focus,textarea:focus,select:focus{
+    border-color:#0F9D58;
+    background:white;
+    outline:none;
+    box-shadow:0 0 0 3px rgba(15,157,88,0.15);
+}
+
+/* BUTTON */
+button{
+    width:100%;
+    padding:15px;
+    background:linear-gradient(90deg,#0F9D58,#22c97a);
+    color:white;
+    border:none;
+    border-radius:12px;
+    font-size:16px;
+    font-weight:600;
+    cursor:pointer;
+    transition:0.2s;
+}
+
+button:active{ transform:scale(.98); }
+button:disabled{ opacity:.6; cursor:not-allowed; }
+
+/* LOADING OVERLAY */
+.loading{
+    position:fixed;
+    inset:0;
+    background:white;
+    display:none;
+    justify-content:center;
+    align-items:center;
+    flex-direction:column;
+    z-index:9999;
+}
+
+.loader{
+    width:65px;
+    height:65px;
+    border:5px solid #e0e0e0;
+    border-top:5px solid #0F9D58;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin-bottom:18px;
+}
+
+@keyframes spin{
+    to{ transform:rotate(360deg); }
+}
+
+.loading-text{
+    color:#0F9D58;
+    font-size:18px;
+    font-weight:600;
+}
+
+/* animation */
+@keyframes fadeUp{
+    from{opacity:0; transform:translateY(12px)}
+    to{opacity:1; transform:translateY(0)}
+}
+
+/* mobile */
+@media(max-width:600px){
+    .container{ padding:22px 16px; }
+    .page-title{ font-size:22px; }
+}
+
+</style>
+</head>
+
+<body>
+
+{% include 'header.html' %}
+
+<div class="page">
+
+<div class="wrapper">
+<div class="container">
+
+<div class="page-title">Health Assessment</div>
+
+<form id="healthForm">
+
+<label>Name</label>
+<input type="text" id="name" required>
+
+<label>Age</label>
+<input type="number" id="age" required>
+
+<label>Earlier Disease</label>
+<select id="disease" onchange="toggleDiseaseInput()" required>
+<option value="">Select</option>
+<option value="no">No</option>
+<option value="yes">Yes</option>
+</select>
+
+<input type="text" id="disease_detail" placeholder="Specify disease" style="display:none;">
+
+<label>Symptoms</label>
+<textarea id="symptoms" required></textarea>
+
+<label>Exercise</label>
+<select id="exercise" required>
+<option value="">Select</option>
+<option value="yes">Yes</option>
+<option value="no">No</option>
+</select>
+
+<label>Last Meal</label>
+<textarea id="last_meal"></textarea>
+
+<label>Yesterday Meals</label>
+<textarea id="yesterday_meals"></textarea>
+
+<label>Working Time</label>
+<select id="working_time" required>
+<option value="">Select</option>
+<option value="7-8 hours">7-8 hours</option>
+<option value="8-9 hours">8-9 hours</option>
+<option value="9-10 hours">9-10 hours</option>
+<option value="10-12 hours">10-12 hours</option>
+</select>
+
+<label>Water Intake</label>
+<select id="water_intake" required>
+<option value="">Select</option>
+<option value="1 litre">1 Litre</option>
+<option value="2 litre">2 Litre</option>
+<option value="3 litre">3 Litre</option>
+<option value="4 litre">4 Litre</option>
+<option value="5 litre">5 Litre</option>
+</select>
+
+<label>Last Health Checkup</label>
+<select id="health_checkup" required>
+<option value="">Select</option>
+<option value="previous_month">Previous Month</option>
+<option value="1-3_month">1-3 Months</option>
+<option value="3-6_month">3-6 Months</option>
+<option value="6-12_month">6-12 Months</option>
+<option value="more_than_12_month">More than 12 Months</option>
+</select>
+
+<button id="submitBtn" type="submit">Generate Health Report</button>
+
+</form>
+</div>
+</div>
+</div>
+
+<!-- LOADING SCREEN -->
+<div class="loading" id="loading">
+<div class="loader"></div>
+<div class="loading-text">Analyzing your health data...</div>
+</div>
+
+<script>
+
+function toggleDiseaseInput(){
+    const disease=document.getElementById('disease').value;
+    const field=document.getElementById('disease_detail');
+    field.style.display=disease==='yes'?'block':'none';
+    field.required=disease==='yes';
+}
+
+document.getElementById('healthForm').addEventListener('submit',function(e){
+    e.preventDefault();
+
+    const btn=document.getElementById('submitBtn');
+    btn.disabled=true;
+    btn.innerText="Analyzing...";
+
+    document.getElementById('loading').style.display='flex';
+
+    const data={
+        name:name.value.trim(),
+        age:age.value,
+        disease:disease.value,
+        disease_detail:disease_detail.value.trim(),
+        symptoms:symptoms.value.trim(),
+        exercise:exercise.value,
+        last_meal:last_meal.value.trim(),
+        yesterday_meals:yesterday_meals.value.trim(),
+        working_time:working_time.value,
+        water_intake:water_intake.value,
+        health_checkup:health_checkup.value,
+    };
+
+    fetch('/analyze',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(data)
+    })
+    .then(r=>r.json())
+    .then(()=>window.location.href="/analyzing")
+    .catch(()=>{
+        alert("Connection error. Please try again.");
+        btn.disabled=false;
+        btn.innerText="Generate Health Report";
+        document.getElementById('loading').style.display='none';
+    });
+
+});
+
+</script>
+
+</body>
+</html>

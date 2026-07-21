@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Habit Builder | Healthify</title>
+<style>
+*{box-sizing:border-box}:root{--green:#0f9d58;--dark:#10201a;--muted:#60746b;--line:#dbe9e2;--soft:#f6fbf8}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#f7fbf8,#edf7f2);color:var(--dark)}
+.wrap{width:min(1120px,100%);margin:auto;padding:30px 16px 70px}.hero,.card{background:white;border:1px solid var(--line);border-radius:14px;padding:24px;box-shadow:0 18px 50px rgba(16,32,26,.08)}
+h1{font-size:38px;margin:8px 0}.kicker{font-size:13px;color:#067244;font-weight:900;text-transform:uppercase}.sub{color:var(--muted);line-height:1.7}.grid{display:grid;grid-template-columns:minmax(300px,.78fr) minmax(0,1.22fr);gap:18px;margin-top:18px;align-items:start}
+input,select,textarea{width:100%;min-width:0;padding:13px;border:1px solid var(--line);border-radius:10px;margin:8px 0 14px;font:inherit;background:#fbfdfc}textarea{min-height:90px;resize:vertical}.btn{border:0;border-radius:10px;background:var(--green);color:white;font-weight:900;padding:13px 16px;cursor:pointer}.btn.dark{background:#10201a}.btn:disabled{opacity:.55;cursor:not-allowed}
+.principles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}.principle{padding:13px;border-radius:12px;background:var(--soft);border:1px solid var(--line);font-weight:850;color:#067244}.principle span{display:block;margin-top:5px;color:var(--muted);font-size:13px;font-weight:600;line-height:1.5}
+.habit{border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px;background:#fbfdfc;overflow:visible}.habit-top{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.habit-score{font-weight:950;color:#067244;text-align:right;min-width:64px}.habit-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.days-wrap{overflow-x:auto;padding:4px 2px 8px;margin-top:10px;-webkit-overflow-scrolling:touch}.days{display:grid;grid-template-columns:repeat(21,32px);gap:6px;min-width:max-content}.day{aspect-ratio:1;border-radius:8px;border:1px solid #dbe9e2;background:#eef5f1;font-size:11px;font-weight:900;color:#60746b;display:flex;align-items:center;justify-content:center;text-align:center}.day.done{background:#0f9d58;border-color:#0f9d58;color:white}.day.today{box-shadow:0 0 0 3px rgba(15,157,88,.16)}.day.locked{opacity:.48}.day.missed{background:#fff1f1;border-color:#ffd1d1;color:#b42318}
+.progress{height:10px;background:#e8f0ec;border-radius:999px;overflow:hidden;margin-top:10px}.fill{height:100%;background:linear-gradient(90deg,#0f9d58,#22c97a)}
+.notice,.motivation{margin-top:18px;background:#fff8e7;color:#73510d;border:1px solid #f4dfad;border-radius:12px;padding:14px;line-height:1.6;font-size:13px}.motivation{background:#eaf8f0;color:#067244;border-color:#ccebd9;font-weight:800}.criteria,.unlock{margin-top:10px;padding:10px;border-radius:10px;background:#f6fbf8;border:1px solid #dbe9e2;color:#067244;font-weight:850;font-size:13px}.criteria{color:#475b51}.milestone{display:inline-block;margin:8px 5px 0 0;padding:8px 10px;border-radius:999px;background:#eaf8f0;color:#067244;font-weight:900;font-size:12px}
+.modal{position:fixed;inset:0;background:rgba(6,18,13,.52);z-index:6000;display:none;align-items:center;justify-content:center;padding:18px}.modal.open{display:flex}.modal-card{width:min(560px,100%);background:white;border:1px solid var(--line);border-radius:16px;padding:22px;box-shadow:0 30px 90px rgba(0,0,0,.24),0 0 44px rgba(15,157,88,.16);animation:pop .22s ease}.modal-head{display:flex;justify-content:space-between;gap:12px}.close{border:0;background:#eef8f3;color:#067244;border-radius:10px;width:38px;height:38px;font-size:22px;cursor:pointer}.tip-list{padding-left:18px;color:#475b51;line-height:1.7}.q-options{display:grid;gap:10px;margin-top:16px}.q-option{border:1px solid var(--line);background:#fbfdfc;border-radius:12px;padding:13px;text-align:left;font-weight:850;cursor:pointer}.q-option.active{background:#eaf8f0;border-color:#0f9d58;color:#067244}.q-progress{font-size:13px;color:#60746b;font-weight:900}.success-pop{text-align:center;color:#067244;font-weight:950;font-size:20px;padding:18px}.reflect-note{margin-top:12px;color:#60746b;font-size:13px;line-height:1.6}@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.98)}to{opacity:1;transform:translateY(0) scale(1)}}
+@media(max-width:900px){.grid{grid-template-columns:1fr}.principles{grid-template-columns:1fr}.days-wrap{overflow:visible}.days{min-width:0;grid-template-columns:repeat(7,minmax(34px,1fr))}.hero,.card{padding:20px}}
+</style>
+</head>
+<body>
+{% include 'header.html' %}
+<main class="wrap">
+<section class="hero">
+    <div class="kicker">Real action habit challenge</div>
+    <h1>21-Day Habit Builder</h1>
+    <p class="sub">Start one habit, work on it honestly, then complete today's day after the action window and a short reflection check. Healthify supports consistency without pressure or fake rewards.</p>
+    <div class="principles">
+        <div class="principle">No duplicates<span>One habit can run once, so progress stays meaningful.</span></div>
+        <div class="principle">2-hour action window<span>Day 1 cannot be completed instantly after creation.</span></div>
+        <div class="principle">Daily reflection<span>Prompt changes daily so the user thinks before completing.</span></div>
+    </div>
+</section>
+<section class="grid">
+    <div class="card">
+        <h2>Create a habit</h2>
+        <label>Habit type</label>
+        <select id="habitType" onchange="toggleOther()"><option>Drink 2-3 litres water</option><option>Sleep before target time</option><option>Walk 20 minutes</option><option>Reduce junk food</option><option>Breathing practice</option><option>No late-night screen</option><option value="Other">Other habit</option></select>
+        <div id="otherWrap" style="display:none"><label>Your habit</label><input id="otherHabit" placeholder="Example: reduce tea, morning stretching"></div>
+        <label>Personal note</label><input id="habitNote" placeholder="Example: after dinner walk">
+        <button class="btn" onclick="addHabit()">Start 21-Day Challenge</button>
+        <button class="btn dark" style="margin-top:10px;width:100%" onclick="openGuide()">How Habit Builder Works</button>
+        <div class="notice">Healthify cannot physically verify real-world actions. It uses timing, daily reflection, and honest tracking to help users build better habits safely.</div>
+    </div>
+    <div class="card">
+        <h2>Your habits</h2>
+        <div class="motivation" id="motivation">Complete one small action today. Keep it realistic.</div>
+        <div id="habitList"></div>
+    </div>
+</section>
+</main>
+<div class="modal" id="guideModal">
+    <div class="modal-card">
+        <div class="modal-head"><div><h2>How it works</h2><p class="sub">A simple, honest system for habit improvement.</p></div><button class="close" onclick="closeGuide()">&times;</button></div>
+        <ul class="tip-list"><li>Create only one active copy of a habit.</li><li>Day 1 unlocks after 2 hours so you get time to actually work on it.</li><li>Each day gives a different reflection prompt. Write what you did, then Healthify marks the day complete.</li><li>Future days stay locked and missed days remain visible.</li></ul>
+    </div>
+</div>
+<div class="modal" id="proofModal">
+    <div class="modal-card">
+        <div class="modal-head"><div><div class="q-progress" id="qProgress">Reflection 1 of 3</div><h2>Today's reflection check</h2><p class="sub" id="proofPrompt"></p></div><button class="close" onclick="closeProof()">&times;</button></div>
+        <div class="q-options" id="qOptions"></div>
+        <div class="reflect-note">Healthify does not claim to physically verify real-world activity. This reflection check supports honest accountability and consistency.</div>
+        <div class="habit-actions"><button class="btn dark" onclick="prevQuestion()">Back</button><button class="btn" onclick="nextQuestion()" id="qNext">Next</button></div>
+        <div class="notice" id="proofNotice" style="display:none"></div>
+    </div>
+</div>
+<script>
+let habits=JSON.parse(localStorage.getItem("healthifyHabitsV3")||localStorage.getItem("healthifyHabitsV2")||"[]").map(h=>({...h,createdAt:h.createdAt||Date.parse(h.start)||Date.now(),milestones:h.milestones||h.achievements||[],proofs:h.proofs||{}}));
+const unlockMs=2*60*60*1000;
+const milestoneMap={1:"Habit Starter",7:"7-Day Consistency",15:"Habit Builder",21:"Healthy Habit Master"};
+const messages=["Good work. Honest consistency builds trust with yourself.","Small effort counts when repeated clearly.","You completed today's action. Keep tomorrow simple too.","Progress feels real when the checkmark follows effort.","Healthier habits grow from repeated practical choices."];
+let activeProofId=null,activeQuestions=[],activeStep=0,activeAnswers=[];
+const habitCriteria={
+"Drink 2-3 litres water":"Criteria: complete gradual hydration through the day, not all water at once. Avoid forcing water if a doctor has restricted fluids.",
+"Sleep before target time":"Criteria: reduce screen/stimulants before sleep and actually prepare your body for rest.",
+"Walk 20 minutes":"Criteria: walk at a safe comfortable pace for around 20 minutes, unless pain/dizziness happens.",
+"Reduce junk food":"Criteria: replace at least one junk craving with a healthier option and notice the trigger.",
+"Breathing practice":"Criteria: do gentle breathing only, never force breath-holding or continue if dizzy.",
+"No late-night screen":"Criteria: keep phone/laptop away near sleep time and use a calmer wind-down routine.",
+"Other":"Criteria: complete the specific action you chose and reflect honestly before marking the day."
+};
+const reflectionBank={
+"Drink 2-3 litres water":[["Did you complete your water target today?",["Yes, mostly completed","Partially completed","Not yet"]],["Was it easier or harder than yesterday?",["Easier","About the same","Harder"]],["What helped you stay consistent?",["Bottle/reminder nearby","Meals/routine helped","I need a better plan"]]],
+"Sleep before target time":[["Did you follow your planned sleep routine?",["Yes, I followed it","Partially","Not yet"]],["How would you rate your sleep preparation?",["Calm and intentional","Average","Distracted"]],["What can improve tomorrow?",["Less screen time","Earlier wind-down","Better room routine"]]],
+"Walk 20 minutes":[["Did you complete today's walk?",["Yes, safely completed","Partially walked","Not yet"]],["Approximately how long did you walk?",["Around 20 minutes or more","10-19 minutes","Less than 10 minutes"]],["How do you feel after activity?",["Better or lighter","Same as before","Tired, need rest"]]],
+"Reduce junk food":[["Did you reduce one junk choice today?",["Yes, I made a better choice","Partially","Not yet"]],["What was the hardest trigger?",["Craving","Stress/boredom","Availability"]],["What helped you control it?",["Healthy replacement","Portion control","I need a plan"]]],
+"Breathing practice":[["Did you practice gentle breathing today?",["Yes, comfortably","Partially","Not yet"]],["How did it feel?",["Calming","Neutral","Uncomfortable"]],["Did you stay within safe limits?",["Yes, no forcing","Mostly","I should stop and rest"]]],
+"No late-night screen":[["Did you reduce late-night screen use?",["Yes, I reduced it","Partially","Not yet"]],["What replaced screen time?",["Reading/journaling","Relaxing/music","Nothing yet"]],["What can improve tomorrow?",["Keep phone away","Set a cutoff time","Reduce notifications"]]],
+"Other":[["Did you complete your chosen habit action today?",["Yes, honestly completed","Partially completed","Not yet"]],["How difficult was it?",["Manageable","Moderate","Hard"]],["What will help tomorrow?",["Small clear plan","Reminder","Better timing"]]]
+};
+const validateMessages=["Excellent. Honest reflection builds real consistency.","Great work. Small accountable actions become strong habits.","Well done. Keep tomorrow's step simple and repeatable.","Nice progress. You are building self-trust one day at a time."];
+function todayDate(){const d=new Date();d.setHours(0,0,0,0);return d;}
+function dateOnly(d){return d.toISOString().slice(0,10);}
+function daysBetween(start){const s=new Date(start);s.setHours(0,0,0,0);return Math.floor((todayDate()-s)/(1000*60*60*24));}
+function timeLeftText(ms){const total=Math.max(0,Math.ceil(ms/1000));const h=Math.floor(total/3600);const m=Math.floor((total%3600)/60);const s=total%60;return h>0?`${h}h ${m}m left`:`${m}m ${s}s left`;}
+function save(){localStorage.setItem("healthifyHabitsV3",JSON.stringify(habits));localStorage.setItem("healthifyHabits",JSON.stringify(habits));fetch("/save-habits",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({habits})}).catch(()=>{});}
+function toggleOther(){document.getElementById("otherWrap").style.display=document.getElementById("habitType").value==="Other"?"block":"none";}
+function habitTitle(){const base=document.getElementById("habitType").value;return base==="Other"?document.getElementById("otherHabit").value.trim():base;}
+function addHabit(){const title=habitTitle();const note=document.getElementById("habitNote").value.trim();if(!title){alert("Please enter your habit.");return;}if(habits.some(h=>h.title.toLowerCase()===title.toLowerCase()&&daysBetween(h.start)<21)){alert("This habit is already active. Complete or finish the current challenge first.");return;}const now=Date.now();habits.unshift({id:now,title,note,start:dateOnly(todayDate()),createdAt:now,completed:{},milestones:[],proofs:{}});document.getElementById("habitNote").value="";document.getElementById("otherHabit").value="";save();render();}
+function openGuide(){const key="habitGuideViews:"+dateOnly(todayDate());const views=Number(localStorage.getItem(key)||0);localStorage.setItem(key,String(Math.min(3,views+1)));document.getElementById("guideModal").classList.add("open");}
+function closeGuide(){document.getElementById("guideModal").classList.remove("open");}
+function baseTitle(title){return reflectionBank[title]?title:(title.includes("Drink")?"Drink 2-3 litres water":title.includes("Sleep")?"Sleep before target time":title.includes("Walk")?"Walk 20 minutes":title.includes("junk")?"Reduce junk food":title.includes("Breathing")?"Breathing practice":title.includes("screen")?"No late-night screen":"Other");}
+function openProof(id){activeProofId=id;const h=habits.find(x=>x.id===id);activeQuestions=[...(reflectionBank[baseTitle(h.title)]||reflectionBank.Other)];activeStep=0;activeAnswers=[];document.getElementById("proofNotice").style.display="none";document.getElementById("proofModal").classList.add("open");renderQuestion();}
+function closeProof(){document.getElementById("proofModal").classList.remove("open");}
+function renderQuestion(){const q=activeQuestions[activeStep];document.getElementById("qProgress").textContent=`Reflection ${activeStep+1} of 3`;document.getElementById("proofPrompt").textContent=q[0];document.getElementById("qOptions").innerHTML=q[1].map((o,i)=>`<button class="q-option ${activeAnswers[activeStep]===i?'active':''}" onclick="chooseAnswer(${i})">${o}</button>`).join("");document.getElementById("qNext").textContent=activeStep===2?"Complete Reflection":"Next";}
+function chooseAnswer(i){activeAnswers[activeStep]=i;renderQuestion();}
+function prevQuestion(){if(activeStep>0){activeStep--;renderQuestion();}}
+function nextQuestion(){if(activeAnswers[activeStep]===undefined){const n=document.getElementById("proofNotice");n.style.display="block";n.textContent="Please choose one reflection option to continue.";return;}document.getElementById("proofNotice").style.display="none";if(activeStep<2){activeStep++;renderQuestion();return;}if(activeAnswers[0]===2){const n=document.getElementById("proofNotice");n.style.display="block";n.textContent="No problem. Complete the action first, then come back and mark today's habit honestly.";return;}completeToday(activeProofId,"Completed with 3-step reflection accountability.");document.querySelector("#proofModal .modal-card").innerHTML=`<div class="success-pop">Congratulations!<br><span class="sub">${validateMessages[Math.floor(Math.random()*validateMessages.length)]}</span></div>`;setTimeout(()=>location.reload(),1200);}
+function completeToday(id,proof){
+ const h=habits.find(x=>x.id===id); if(!h)return;
+ const idx=daysBetween(h.start)+1; if(idx<1||idx>21)return;
+ if(idx===1 && Date.now()-(h.createdAt||0)<unlockMs)return;
+ const key=dateOnly(todayDate()); if(h.completed[key])return;
+ h.completed[key]=true;h.proofs[key]=proof;
+ if(milestoneMap[idx]&&!h.milestones.includes(milestoneMap[idx]))h.milestones.push(milestoneMap[idx]);
+ document.getElementById("motivation").textContent=messages[Math.floor(Math.random()*messages.length)];
+ save();render();
+}
+function render(){
+ const list=document.getElementById("habitList");
+ if(!habits.length){list.innerHTML='<p class="sub">No habits yet. Start your first 21-day challenge.</p>';return;}
+ list.innerHTML=habits.map(h=>{
+   const current=daysBetween(h.start)+1, done=Object.keys(h.completed||{}).length, todayKey=dateOnly(todayDate());
+   const lockedDayOne=current===1 && Date.now()-(h.createdAt||0)<unlockMs && !h.completed[todayKey];
+   const ready=current>=1&&current<=21&&!h.completed[todayKey]&&!lockedDayOne;
+   const unlockText=lockedDayOne?`Day 1 unlocks after your 2-hour action window: ${timeLeftText(unlockMs-(Date.now()-(h.createdAt||0)))}`:(ready?"Today's reflection check is ready after you complete your action.":(h.completed[todayKey]?"Today's habit is completed.":"Challenge window completed."));
+   let cells="";
+   for(let i=1;i<=21;i++){const d=new Date(h.start);d.setDate(d.getDate()+i-1);const key=dateOnly(d);const isDone=!!h.completed[key], isToday=i===current, future=i>current, missed=i<current&&!isDone, actionLocked=isToday&&!isDone&&lockedDayOne;cells+=`<div class="day ${isDone?'done':''} ${isToday?'today':''} ${future||actionLocked?'locked':''} ${missed?'missed':''}" title="Day ${i}">${i}</div>`;}
+   return `<div class="habit"><div class="habit-top"><div><b>${h.title}</b><br><span class="sub">${h.note||"Started "+h.start}</span></div><div class="habit-score">${done}/21</div></div><div class="progress"><div class="fill" style="width:${Math.min(100,done/21*100)}%"></div></div><div class="criteria">${habitCriteria[baseTitle(h.title)]||habitCriteria.Other} Healthify uses a transparent 3-step reflection check for accountability and does not claim physical verification.</div><div class="unlock">${unlockText}</div><div class="days-wrap"><div class="days">${cells}</div></div><div class="habit-actions"><button class="btn" ${ready?'onclick="openProof('+h.id+')"':'disabled'}>Complete Today's Reflection</button></div><div>${(h.milestones||[]).map(a=>`<span class="milestone">${a}</span>`).join("")}</div></div>`;
+ }).join("");
+}
+render();setInterval(render,1000);
+window.addEventListener("load",()=>{const key="habitGuideViews:"+dateOnly(todayDate());if(Number(localStorage.getItem(key)||0)<3)setTimeout(openGuide,500);});
+</script>
+</body>
+</html>

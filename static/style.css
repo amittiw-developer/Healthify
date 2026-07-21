@@ -1,0 +1,42 @@
+/* ===== HEALTHIFY GLOBAL HEADER ===== */
+
+.topbar{
+    width:100%;
+    background:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:10px 0;
+    box-shadow:0 2px 10px rgba(0,0,0,0.06);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+/* container */
+.brand-wrap{
+    width:100%;
+    max-width:900px;
+    text-align:center;
+}
+
+/* LOGO */
+.brand-logo{
+    max-width:240px;
+    width:55%;
+    height:auto;
+    object-fit:contain;
+}
+
+/* MOBILE */
+@media(max-width:600px){
+    .brand-logo{
+        max-width:170px;
+        width:70%;
+    }
+}
+
+/* page spacing so content not hide */
+.page{
+    padding-top:90px;
+}

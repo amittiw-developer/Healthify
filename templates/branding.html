@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthify</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--green:#0f9d58;--mint:#dff8ea;--dark:#07100d;--muted:#b7c8c0}
+body{
+    min-height:100vh;
+    font-family:"Segoe UI",system-ui,Arial,sans-serif;
+    background:
+        radial-gradient(circle at 20% 10%,rgba(15,157,88,.22),transparent 30%),
+        radial-gradient(circle at 80% 80%,rgba(34,201,122,.16),transparent 34%),
+        linear-gradient(145deg,#06110d,#0c1914 58%,#07100d);
+    color:white;
+    overflow-x:hidden;
+    overflow-y:auto;
+}
+.splash,.main{
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-direction:column;
+    padding:24px;
+    text-align:center;
+}
+.splash{position:fixed;inset:0}
+.splash{z-index:4;background:#f7fbf8;color:#10201a;animation:fadeIn .45s ease}
+.splash-card{padding:34px 42px;border:1px solid #dbe9e2;border-radius:14px;background:white;box-shadow:0 30px 90px rgba(16,32,26,.14)}
+.splash-logo{height:76px;margin-bottom:18px}
+.brand{font-size:42px;font-weight:950;letter-spacing:0}
+.tagline{margin-top:8px;color:#60746b;font-size:15px}
+.loader{margin:26px auto 0;width:70px;height:70px;border-radius:50%;border:6px solid #dcebe4;border-top-color:var(--green);animation:spin 1s linear infinite}
+.main{display:none;position:relative;z-index:2;animation:fadeIn .55s ease}
+.hero{
+    width:min(860px,100%);
+    padding:38px;
+    border:1px solid rgba(255,255,255,.12);
+    background:rgba(255,255,255,.07);
+    backdrop-filter:blur(22px);
+    border-radius:14px;
+    box-shadow:0 30px 90px rgba(0,0,0,.28);
+}
+.logo-banner{height:62px;margin-bottom:22px;filter:drop-shadow(0 8px 26px rgba(0,0,0,.25))}
+.headline{font-size:48px;line-height:1.05;font-weight:950;letter-spacing:0;text-shadow:0 0 28px rgba(34,201,122,.18)}
+.headline span{color:#9fffcf}
+.copy{margin:16px auto 0;max-width:650px;color:#d5e8df;line-height:1.75}
+.search{margin:30px auto 0;width:min(650px,100%);display:flex;gap:10px;padding:10px;border-radius:14px;background:#06110d;border:1px solid rgba(255,255,255,.12);box-shadow:0 0 0 1px rgba(15,157,88,.18),0 20px 60px rgba(15,157,88,.08)}
+textarea{flex:1;min-height:58px;max-height:120px;resize:none;border:0;outline:0;background:transparent;color:white;padding:15px;font:inherit;line-height:1.6;scrollbar-width:none}
+textarea::-webkit-scrollbar{display:none}
+textarea::placeholder{color:#8ea79b}
+button,.login-btn{border:0;border-radius:10px;background:var(--green);color:white;font-weight:900;padding:0 22px;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;min-height:58px}
+.login-btn{margin-top:20px;background:white;color:#067244}
+.trial{margin-top:14px;color:#b7c8c0;font-size:13px}
+.answer{display:none;margin:22px auto 0;max-width:650px;text-align:left;background:rgba(255,255,255,.08);border:1px solid rgba(15,157,88,.28);border-radius:14px;padding:18px;line-height:1.75;color:#eefbf4}
+.notice{display:none;margin:18px auto 0;max-width:650px;background:#fff8e7;color:#73510d;padding:14px;border-radius:10px;line-height:1.6}
+@keyframes fadeIn{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:700px){.splash,.main{align-items:flex-start;justify-content:flex-start;padding:18px 14px}.headline{font-size:34px}.hero{padding:24px;margin:18px auto 28px}.search{flex-direction:column}button{width:100%}.logo-banner{height:52px}.answer,.notice{max-height:none}.login-btn{width:100%;min-height:54px}}
+</style>
+</head>
+<body>
+<section class="splash" id="splash">
+    <div class="splash-card">
+        <img src="{{ url_for('static', filename='logo-banner.png') }}" class="splash-logo" alt="Healthify">
+        <div class="brand">Healthify</div>
+        <div class="tagline">Health awareness that feels calm, safe, and personal</div>
+        <div class="loader"></div>
+    </div>
+</section>
+
+<main class="main" id="main">
+    <section class="hero">
+        <img src="{{ url_for('static', filename='logo-banner.png') }}" class="logo-banner" alt="Healthify">
+        <h1 class="headline">Welcome to <span>Healthify</span></h1>
+        <p class="copy">Try Healthify MindCare AI for two free questions. For full reports, profile, games, dashboard, and habit tracking, create your Healthify account.</p>
+        <div class="search">
+            <textarea id="symptom" rows="1" placeholder="Ask a wellness question..."></textarea>
+            <button onclick="search()">Ask MindCare</button>
+        </div>
+        <div class="trial" id="trialText">Guest trial: 2 questions available</div>
+        <div class="answer" id="answer"></div>
+        <div class="notice" id="notice"></div>
+        <a href="/login" class="login-btn">Login / Signup</a>
+    </section>
+</main>
+
+<script>
+setTimeout(()=>{document.getElementById("splash").style.display="none";document.getElementById("main").style.display="flex";},1500);
+const textarea=document.getElementById("symptom");
+textarea.addEventListener("input",()=>{textarea.style.height="58px";textarea.style.height=textarea.scrollHeight+"px";});
+function typeText(el,text){el.innerHTML="";let i=0;function run(){if(i<text.length){el.innerHTML+=text.charAt(i).replace("<","&lt;").replace(">","&gt;");i++;setTimeout(run,8);}}run();}
+async function search(){
+    const text=textarea.value.trim();
+    if(!text){alert("Please enter your question");return;}
+    const answer=document.getElementById("answer");
+    const notice=document.getElementById("notice");
+    answer.style.display="block";
+    notice.style.display="none";
+    answer.textContent="Healthify MindCare AI is thinking...";
+    const res=await fetch("/public-search-ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:text})});
+    const data=await res.json();
+    typeText(answer,data.answer||"Please try again.");
+    if(data.remaining!==null&&data.remaining!==undefined){document.getElementById("trialText").textContent=`Guest trial: ${data.remaining} question${data.remaining===1?"":"s"} left`;}
+    if(data.require_login){
+        notice.style.display="block";
+        notice.textContent="Please login or create an account to continue safely.";
+        setTimeout(()=>{window.location.href="/login";},1800);
+    }
+    textarea.value="";
+}
+textarea.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();search();}});
+</script>
+</body>
+</html>

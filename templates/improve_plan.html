@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthify Recovery</title>
+<style>
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(120deg,#e8f7ee,#f5fbf8,#e6f4ee);background-size:300% 300%;animation:bgmove 14s ease infinite;color:#10201a}@keyframes bgmove{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}.wrapper{display:flex;justify-content:center;padding:34px 16px 50px}.card{background:white;max-width:580px;width:100%;border:1px solid #dbe9e2;border-radius:8px;padding:30px 26px;box-shadow:0 18px 50px rgba(16,32,26,.1)}.title{text-align:center;font-size:25px;font-weight:900;color:#0f9d58}.subtitle{text-align:center;font-size:14px;color:#60746b;margin:8px 0 22px}.userbox{background:#f0fdf4;border-left:5px solid #22c55e;padding:14px;border-radius:8px;margin-bottom:18px;color:#065f46;font-size:14px}.insight{font-size:18px;font-weight:800;color:#065f46;margin:18px 0 10px;min-height:48px}.reason{font-size:14px;color:#374151;margin-bottom:18px;line-height:1.7}.chips{display:flex;flex-wrap:wrap;gap:10px;margin:18px 0}.chip{padding:10px 14px;border-radius:999px;background:#e7f7ee;cursor:pointer;transition:.25s;font-size:14px}.chip:hover{background:#c8f0da}.chip.done{background:#22c55e;color:white}.bar{height:10px;background:#e5e7eb;border-radius:20px;overflow:hidden}.fill{height:100%;width:0%;background:linear-gradient(90deg,#0f9d58,#22c97a);transition:width 1s ease}button{width:100%;padding:14px;margin-top:18px;border:0;border-radius:8px;font-size:16px;font-weight:900;cursor:pointer}.primary{background:#0f9d58;color:white}.secondary{background:#10201a;color:white}
+</style>
+</head>
+<body>
+{% include 'header.html' %}
+<div class="wrapper"><div class="card">
+<div class="title">We understood your body signals</div>
+<div class="subtitle">Gentle recovery guidance prepared</div>
+{% if user_text %}<div class="userbox">You told us: <b>{{ user_text }}</b></div>{% endif %}
+<div class="insight" id="typing"></div>
+<div class="reason">{{ cause }}</div>
+<div class="chips">{% for step in solution.replace('â€¢','•').split('•') %}{% if step.strip() %}<div class="chip" onclick="toggleChip(this)">{{ step.strip() }}</div>{% endif %}{% endfor %}</div>
+<div class="meter"><div style="margin-bottom:6px">Estimated progress after following steps: <b id="percent">0%</b></div><div class="bar"><div class="fill" id="fill"></div></div></div>
+<button class="primary" onclick="hfGo(event,'/health-score')">Recheck after recovery</button>
+<button class="secondary" onclick="hfGo(event,'/home')">Back to Home</button>
+</div></div>
+<script>
+const text="{{ effect|escape }}";let i=0;function type(){if(i<text.length){document.getElementById("typing").innerHTML+=text.charAt(i);i++;setTimeout(type,18);}}type();
+function toggleChip(el){el.classList.toggle("done");updateMeter();}
+function updateMeter(){let done=document.querySelectorAll(".chip.done").length;let total=document.querySelectorAll(".chip").length||1;let percent=Math.round((done/total)*90)+10;document.getElementById("fill").style.width=percent+"%";document.getElementById("percent").innerText=percent+"%";}
+</script>
+</body>
+</html>

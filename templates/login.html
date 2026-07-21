@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Login | Healthify</title>
+<style>
+*{box-sizing:border-box}
+:root{--green:#0f9d58;--dark:#10201a;--muted:#60746b;--line:#dbe9e2}
+body{margin:0;min-height:100vh;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#f7fbf8,#e5f5ed);color:var(--dark);display:flex;align-items:center;justify-content:center;padding:24px;animation:pageFadeIn 0.5s ease;transition:opacity 0.4s ease}
+@keyframes pageFadeIn{from{opacity:0}to{opacity:1}}
+.page-fade-out{opacity:0!important;pointer-events:none}
+.shell{width:min(980px,100%);display:grid;grid-template-columns:1fr 1fr;background:white;border:1px solid var(--line);border-radius:10px;overflow:hidden;box-shadow:0 26px 80px rgba(16,32,26,.14);animation:enter .45s ease}
+@keyframes enter{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.left{padding:38px}.right{padding:38px;background:linear-gradient(145deg,#0f9d58,#073f2a);color:white;display:flex;flex-direction:column;justify-content:center}
+.logo{text-align:center;margin-bottom:20px}.logo img{height:48px}
+h1{margin:0 0 8px;font-size:30px}.sub{color:var(--muted);line-height:1.7;margin:0 0 24px}.right .sub{color:#d9f8e7}
+label{font-weight:800;font-size:13px;color:#34473d}.field{margin-bottom:14px}
+input{width:100%;margin-top:7px;padding:13px;border:1px solid var(--line);border-radius:8px;font:inherit;outline:0}
+input:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(15,157,88,.13)}
+.btn{width:100%;border:0;border-radius:8px;padding:14px 16px;font-weight:900;cursor:pointer;margin-top:10px}
+.primary{background:var(--green);color:white}.secondary{background:#eef8f3;color:#067244}.google{background:white;color:#1f2937;border:1px solid var(--line)}.guest{background:#10201a;color:white}.admin{background:#fff8e7;color:#73510d}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:8px 0 16px}.row a,.small a{color:#067244;text-decoration:none;font-weight:800;font-size:13px}
+.divider{text-align:center;color:#8aa096;font-size:12px;font-weight:900;margin:18px 0;position:relative}.divider:before,.divider:after{content:"";position:absolute;top:50%;width:38%;height:1px;background:var(--line)}.divider:before{left:0}.divider:after{right:0}
+.msg{padding:12px;border-radius:8px;margin-bottom:14px;font-weight:800}.error{background:#fff1f1;color:#b42318}.success{background:#eaf8f0;color:#067244}
+.pill{display:inline-block;background:rgba(255,255,255,.14);border:1px solid rgba(255,255,255,.18);padding:8px 12px;border-radius:999px;font-weight:900;font-size:13px;margin-bottom:14px}
+.legal{font-size:12px;line-height:1.6;color:#6b7f75;margin-top:16px}.legal a{color:#067244;font-weight:800}
+@media(max-width:780px){.shell{grid-template-columns:1fr}.right{display:none}.left{padding:28px}}
+</style>
+</head>
+<body>
+<main class="shell">
+    <section class="left">
+        <div class="logo"><img src="{{ url_for('static', filename='logo-banner.png') }}" alt="Healthify"></div>
+        <h1>Welcome back</h1>
+        <p class="sub">Sign in to continue your wellness profile, reports, and Healthify MindCare AI.</p>
+        {% if error %}<div class="msg error">{{ error }}</div>{% endif %}
+        {% if success %}<div class="msg success">{{ success }}</div>{% endif %}
+        <form id="loginForm" method="POST" action="/login-password">
+            <div class="field"><label>Email ID</label><input name="email" type="email" placeholder="you@example.com" required></div>
+            <div class="field"><label>Password</label><input name="password" type="password" placeholder="Enter password" required></div>
+            <div class="row"><span></span><a href="/forgot-details">Forgot details?</a></div>
+            <button class="btn primary" type="submit">Login Securely</button>
+        </form>
+        <div class="divider">OTHER OPTIONS</div>
+        <button class="btn secondary" onclick="transitionTo('/signup')">Create Account</button>
+        <button class="btn google" onclick="transitionTo('/google-login')">G Continue with Google</button>
+        <button class="btn guest" onclick="transitionTo('/guest')">Continue as Guest</button>
+        <button class="btn admin" onclick="transitionTo('/admin-login')">Healthify Admin</button>
+        <p class="legal">By continuing, you agree to Healthify's <a href="/terms">Terms</a> and <a href="/privacy-policy">Privacy Policy</a>. Healthify is for awareness only, not diagnosis.</p>
+    </section>
+    <section class="right">
+        <div class="pill">Safe wellness awareness</div>
+        <h1>Know your body better, without panic.</h1>
+        <p class="sub">Healthify helps users understand lifestyle signals, track basic wellness details, and seek professional care when needed.</p>
+    </section>
+</main>
+{% if redirect_to %}
+<script>
+document.body.classList.add('page-fade-out');
+setTimeout(()=>{window.location.replace("{{ redirect_to }}");},400);
+</script>
+{% endif %}
+<script>
+function transitionTo(url) {
+    document.body.classList.add('page-fade-out');
+    setTimeout(() => { location.href = url; }, 400);
+}
+const form = document.getElementById('loginForm');
+if(form) {
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        document.body.classList.add('page-fade-out');
+        setTimeout(() => { form.submit(); }, 400);
+    });
+}
+</script>
+</body>
+</html>

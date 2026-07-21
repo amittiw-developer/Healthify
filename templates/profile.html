@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Profile | Healthify</title>
+<style>
+*{box-sizing:border-box;min-width:0}
+:root{--green:#0f9d58;--dark:#10201a;--muted:#64766d;--line:#dfeae4;--soft:#f5fbf8}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(180deg,#f7fbf8,#edf7f2);color:var(--dark);overflow-wrap:anywhere}
+.wrap{width:min(1040px,100%);margin:auto;padding:30px 16px 70px}
+.hero{background:white;border:1px solid var(--line);border-radius:8px;padding:28px;box-shadow:0 18px 50px rgba(16,32,26,.08)}
+.kicker{color:#067244;font-weight:900;font-size:13px;text-transform:uppercase;letter-spacing:.06em}
+h1{margin:8px 0 8px;font-size:34px;letter-spacing:0}
+.sub{margin:0;color:var(--muted);line-height:1.7}
+.grid{display:grid;grid-template-columns:320px 1fr;gap:18px;margin-top:18px}
+.card{background:white;border:1px solid var(--line);border-radius:8px;padding:22px;box-shadow:0 12px 34px rgba(16,32,26,.06);max-width:100%;overflow:hidden}
+.section-title{font-weight:900;color:#067244;margin-bottom:14px}
+.avatar-preview{height:120px;width:120px;margin:auto;border-radius:50%;display:flex;align-items:center;justify-content:center;background:#eaf8f0;border:3px solid #ccebd9;font-size:54px}
+.avatar-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:18px}
+.avatar{height:48px;border:1px solid var(--line);border-radius:8px;background:#f8fcfa;font-size:24px;cursor:pointer}
+.avatar.active{border-color:var(--green);box-shadow:0 0 0 3px rgba(15,157,88,.15);background:#eaf8f0}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{display:block;font-weight:800;font-size:13px;color:#34473d;margin-bottom:6px}
+input,select,textarea{width:100%;max-width:100%;border:1px solid var(--line);border-radius:8px;background:#fbfdfc;padding:12px;font:inherit;outline:0}
+textarea{min-height:90px;resize:vertical}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(15,157,88,.13);background:white}
+input[readonly]{background:#f1f8f4;color:#52665c;border-color:#cfeadd}
+.wide{grid-column:1/-1}
+.bmi-box{margin-top:14px;padding:18px;border-radius:8px;background:linear-gradient(135deg,#eaf8f0,#fff);border:1px solid #cfeadd}
+.bmi-number{font-size:34px;font-weight:900;color:#067244}
+.bmi-status{font-weight:800;color:#475b51}
+.toggles{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.toggle{border:1px solid var(--line);border-radius:8px;padding:12px;background:#fbfdfc}
+.save{margin-top:18px;width:100%;border:0;border-radius:8px;padding:15px;background:var(--green);color:white;font-weight:900;cursor:pointer}
+.notice{display:none;margin-top:14px;padding:12px;border-radius:8px;background:#eaf8f0;color:#067244;font-weight:800}
+.notice.show{display:block}
+.disclaimer{margin-top:18px;color:#73510d;background:#fff8e7;border:1px solid #f4dfad;border-radius:8px;padding:14px;line-height:1.6;font-size:13px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}.form-grid{grid-template-columns:1fr}.toggles{grid-template-columns:1fr 1fr}}
+@media(max-width:430px){.wrap{padding:24px 10px 62px}.hero{padding:24px 20px}.card{padding:20px 18px}.toggles{gap:8px}.avatar-grid{gap:7px}.avatar{height:44px}h1{font-size:31px;line-height:1.16}}
+@media(max-width:340px){.wrap{padding-inline:8px}.card{padding:18px 16px}.toggles{grid-template-columns:1fr}.avatar{height:40px;font-size:21px}.avatar-preview{width:110px;height:110px}}
+</style>
+</head>
+<body>
+{% include 'header.html' %}
+<main class="wrap">
+    <section class="hero">
+        <div class="kicker">Personal wellness profile</div>
+        <h1>Your Healthify Profile</h1>
+        <p class="sub">Save your personal details, choose a health avatar, and instantly calculate BMI from height and weight.</p>
+    </section>
+
+    <section class="grid">
+        <aside class="card">
+            <div class="section-title">Profile DP</div>
+            <div class="avatar-preview" id="avatarPreview">💚</div>
+            <div class="avatar-grid" id="avatarGrid">
+                <button class="avatar" data-key="pulse" data-icon="💚">💚</button>
+                <button class="avatar" data-key="heart" data-icon="❤️">❤️</button>
+                <button class="avatar" data-key="leaf" data-icon="🌿">🌿</button>
+                <button class="avatar" data-key="shield" data-icon="🛡️">🛡️</button>
+                <button class="avatar" data-key="runner" data-icon="🏃">🏃</button>
+                <button class="avatar" data-key="yoga" data-icon="🧘">🧘</button>
+                <button class="avatar" data-key="water" data-icon="💧">💧</button>
+                <button class="avatar" data-key="sleep" data-icon="🌙">🌙</button>
+                <button class="avatar" data-key="apple" data-icon="🍎">🍎</button>
+                <button class="avatar" data-key="doctor" data-icon="🩺">🩺</button>
+            </div>
+            <div class="bmi-box">
+                <div class="section-title">Live BMI</div>
+                <div class="bmi-number" id="bmiValue">{{ profile.get('bmi') or '--' }}</div>
+                <div class="bmi-status" id="bmiStatus">{{ profile.get('bmi_status') or 'Enter height and weight' }}</div>
+            </div>
+        </aside>
+
+        <form class="card" id="profileForm">
+            <div class="section-title">Personal Details</div>
+            <div class="form-grid">
+                <div><label>Name</label><input id="name" value="{{ profile.get('name','') }}"></div>
+                <div><label>Email</label><input id="email" type="email" value="{{ profile.get('email','') }}" {% if profile.get('login_provider') == 'google' %}readonly{% endif %}></div>
+                <div><label>Age</label><input id="age" type="number" min="1" max="122" value="{{ profile.get('age','') }}"></div>
+                <div><label>Gender</label><select id="gender"><option value="">Select</option><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option></select></div>
+                <div><label>Weight (kg)</label><input id="weight" type="number" min="1" step="0.1" value="{{ profile.get('weight','') }}"></div>
+                <div><label>Height (cm)</label><input id="height_cm" type="number" min="30" step="0.1" value="{{ profile.get('height_cm','') }}"></div>
+                <div><label>Height (ft)</label><input id="height_ft" type="number" min="1" max="8" value="{{ profile.get('height_ft','') }}"></div>
+                <div><label>Height (inch)</label><input id="height_in" type="number" min="0" max="11" value="{{ profile.get('height_in','') }}"></div>
+                <div><label>Blood Group</label><select id="blood_group"><option value="">Select</option><option>A+</option><option>A-</option><option>B+</option><option>B-</option><option>AB+</option><option>AB-</option><option>O+</option><option>O-</option><option>Not sure</option></select></div>
+                <div><label>Emergency Contact</label><input id="emergency_contact" value="{{ profile.get('emergency_contact','') }}"></div>
+
+                <div class="wide section-title">Health History</div>
+                <div class="wide toggles">
+                    <div class="toggle"><label>Sugar / Diabetes</label><select id="sugar"><option value="no">No</option><option value="yes">Yes</option><option value="unknown">Not sure</option></select></div>
+                    <div class="toggle"><label>Blood Pressure</label><select id="bp"><option value="no">No</option><option value="yes">Yes</option><option value="unknown">Not sure</option></select></div>
+                    <div class="toggle"><label>Thyroid</label><select id="thyroid"><option value="no">No</option><option value="yes">Yes</option><option value="unknown">Not sure</option></select></div>
+                    <div class="toggle"><label>Heart Condition</label><select id="heart"><option value="no">No</option><option value="yes">Yes</option><option value="unknown">Not sure</option></select></div>
+                    <div class="toggle"><label>Asthma / Breathing</label><select id="asthma"><option value="no">No</option><option value="yes">Yes</option><option value="unknown">Not sure</option></select></div>
+                </div>
+                <div class="wide"><label>Allergies</label><textarea id="allergies">{{ profile.get('allergies','') }}</textarea></div>
+                <div class="wide"><label>Current Medicines</label><textarea id="medicines">{{ profile.get('medicines','') }}</textarea></div>
+            </div>
+            <button class="save" type="submit">Save Health Profile</button>
+            <div class="notice" id="notice">Profile saved successfully.</div>
+            <div class="disclaimer">BMI is a general wellness indicator only. It may not be accurate for athletes, pregnancy, children, or certain medical conditions. Consult a qualified professional for medical interpretation.</div>
+        </form>
+    </section>
+</main>
+<script>
+const saved={{ profile|tojson }};
+const avatarMap={pulse:"💚",heart:"❤️",leaf:"🌿",shield:"🛡️",runner:"🏃",yoga:"🧘",water:"💧",sleep:"🌙",apple:"🍎",doctor:"🩺"};
+let selectedAvatar=saved.avatar||"pulse";
+function setSelect(id,value){if(value)document.getElementById(id).value=value;}
+["gender","blood_group","sugar","bp","thyroid","heart","asthma"].forEach(id=>setSelect(id,saved[id]));
+function renderAvatar(){document.getElementById("avatarPreview").textContent=avatarMap[selectedAvatar]||"💚";document.querySelectorAll(".avatar").forEach(btn=>btn.classList.toggle("active",btn.dataset.key===selectedAvatar));}
+document.querySelectorAll(".avatar").forEach(btn=>btn.onclick=()=>{selectedAvatar=btn.dataset.key;renderAvatar();});
+function calcBmi(){
+    const weight=parseFloat(document.getElementById("weight").value);
+    let cm=parseFloat(document.getElementById("height_cm").value);
+    const ft=parseFloat(document.getElementById("height_ft").value);
+    const inch=parseFloat(document.getElementById("height_in").value)||0;
+    if(!cm && ft) cm=((ft*12)+inch)*2.54;
+    if(weight>0 && cm>0){
+        const bmi=weight/Math.pow(cm/100,2);
+        let status="Healthy range";
+        if(bmi<18.5)status="Underweight";
+        else if(bmi<25)status="Normal";
+        else if(bmi<30)status="Overweight";
+        else status="Obesity range";
+        document.getElementById("bmiValue").textContent=bmi.toFixed(1);
+        document.getElementById("bmiStatus").textContent=status;
+        return {bmi:bmi.toFixed(1),bmi_status:status,height_cm:cm.toFixed(1)};
+    }
+    document.getElementById("bmiValue").textContent="--";
+    document.getElementById("bmiStatus").textContent="Enter height and weight";
+    return {bmi:"",bmi_status:"",height_cm:document.getElementById("height_cm").value};
+}
+["weight","height_cm","height_ft","height_in"].forEach(id=>document.getElementById(id).addEventListener("input",calcBmi));
+document.getElementById("profileForm").addEventListener("submit",async e=>{
+    e.preventDefault();
+    const bmi=calcBmi();
+    const ids=["name","email","age","gender","weight","height_ft","height_in","blood_group","sugar","bp","thyroid","heart","asthma","allergies","medicines","emergency_contact"];
+    const data={avatar:selectedAvatar,...bmi};
+    ids.forEach(id=>data[id]=document.getElementById(id).value);
+    const res=await fetch("/save-profile",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)});
+    if(res.ok){document.getElementById("notice").classList.add("show");setTimeout(()=>document.getElementById("notice").classList.remove("show"),2200);}
+});
+renderAvatar();calcBmi();
+</script>
+</body>
+</html>

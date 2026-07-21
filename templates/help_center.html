@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthify Help Center</title>
+<style>
+*{box-sizing:border-box;min-width:0}
+:root{--ink:#0d2219;--muted:#657a70;--line:#dcebe3;--green:#0f9d58;--green2:#15b978;--soft:#f4fbf7;--card:#ffffff;--shadow:0 18px 55px rgba(13,34,25,.08)}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 8% 0%,rgba(15,157,88,.13),transparent 30%),linear-gradient(180deg,#f9fdfb,#edf8f2)}
+button,input,textarea{font-family:inherit}
+.launch{position:fixed;inset:0;z-index:8000;display:grid;place-items:center;background:radial-gradient(circle at 50% 42%,rgba(15,157,88,.25),transparent 28%),linear-gradient(145deg,#06100d,#10251c 55%,#030604);transition:opacity .38s ease,visibility .38s ease}
+.launch.hide{opacity:0;visibility:hidden;pointer-events:none}
+.launch-card{padding:22px 26px;border:1px solid rgba(112,255,180,.28);border-radius:22px;background:rgba(255,255,255,.045);box-shadow:0 0 64px rgba(15,157,88,.25);text-align:center;animation:enter .9s ease both}
+.launch-card b{display:block;font-size:clamp(26px,6vw,52px);line-height:1.18;padding-bottom:8px;background:linear-gradient(90deg,#fff,#8affc2,#35d1ff);-webkit-background-clip:text;background-clip:text;color:transparent}
+.launch-card span{color:#d8f4e5;font-weight:850}
+.wrap{width:min(1180px,100%);margin:auto;padding:28px 16px 78px}
+.hero{position:relative;text-align:center;background:linear-gradient(145deg,rgba(255,255,255,.96),rgba(246,252,249,.92));border:1px solid var(--line);border-radius:20px;padding:28px 18px 24px;box-shadow:var(--shadow);overflow:hidden}
+.hero:before{content:"";position:absolute;inset:auto 14% -80px 14%;height:120px;background:radial-gradient(circle,rgba(15,157,88,.18),transparent 65%);pointer-events:none}
+h1{position:relative;margin:0 0 10px;padding:0 0 6px;font-size:clamp(30px,4.8vw,54px);line-height:1.22;background:linear-gradient(90deg,#0a2d1d,#0f9d58,#22c7a0);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 26px rgba(15,157,88,.12);overflow:visible}
+.hero p{position:relative;margin:0 auto;color:var(--muted);line-height:1.65;max-width:760px;font-size:clamp(14px,2vw,16px)}
+.lang{position:relative;margin:20px auto 0;display:inline-flex;gap:6px;padding:6px;border:1px solid var(--line);border-radius:999px;background:#f7fcf9;box-shadow:inset 0 0 18px rgba(15,157,88,.04)}
+.lang button{border:0;background:transparent;border-radius:999px;padding:10px 15px;font-weight:950;color:#067244;cursor:pointer;transition:.2s ease}
+.lang button.active{background:linear-gradient(135deg,var(--green),var(--green2));color:white;box-shadow:0 10px 24px rgba(15,157,88,.2)}
+.panel{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:var(--shadow);max-width:100%;overflow:hidden}
+.main-view{margin-top:18px}.section-title{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px;font-size:21px}.section-title span{font-size:13px;color:var(--muted);font-weight:700}
+.categories{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.cat{position:relative;border:1px solid var(--line);background:linear-gradient(145deg,#fff,#f7fcf9);border-radius:16px;padding:15px 16px;text-align:left;cursor:pointer;transition:.2s ease;min-height:86px}
+.cat:hover,.cat.active{border-color:#9dddbc;box-shadow:0 16px 34px rgba(15,157,88,.12);transform:translateY(-2px)}
+.cat b{display:flex;align-items:center;gap:9px;color:#067244;font-size:15px}.cat em{font-style:normal;width:32px;height:32px;display:grid;place-items:center;border-radius:12px;background:#eaf8f0;color:#067244;font-size:13px}
+.cat span{display:block;margin:9px 0 0 41px;color:var(--muted);font-size:13px;line-height:1.45}
+.inline-qs{display:none;grid-column:1/-1;border:1px solid #d9ecdf;background:linear-gradient(145deg,#f8fdfb,#eef8f3);border-radius:18px;padding:13px;animation:rise .24s ease}
+.inline-qs.open{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.q{border:1px solid #dbe9e2;border-radius:14px;background:white;padding:13px 14px;text-align:left;font-weight:850;color:#15291f;cursor:pointer;line-height:1.42;transition:.18s ease;min-height:50px}
+.q:hover{border-color:#9dddbc;color:#067244;box-shadow:0 12px 25px rgba(15,157,88,.09)}
+.chat-view{display:none!important;margin-top:18px}.chat-view.open{display:flex!important;animation:rise .3s ease}
+body.help-chat-active .hero{display:none}
+body.help-chat-active{height:100dvh;overflow:hidden}
+body.help-chat-active .wrap{height:calc(100dvh - 82px);padding:14px 12px;display:flex;align-items:stretch;justify-content:center}
+body.help-chat-active .chat-view.open{margin-top:0}
+.chat-shell{width:min(980px,100%);height:100%;min-height:0;display:flex;flex-direction:column}
+.chat-head{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px;border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:13px}
+.back{border:1px solid #ccebd9;background:#eef8f3;color:#067244;border-radius:13px;padding:10px 13px;font-weight:950;cursor:pointer}
+.support-title{text-align:center}.support-title b{display:block;color:#067244;font-size:18px}.support-title span{display:block;margin-top:3px;color:var(--muted);font-size:13px}
+.chat-window{flex:1;display:flex;flex-direction:column;gap:11px;overflow-y:auto;overflow-x:hidden;min-height:0;padding:8px 6px 12px;scroll-behavior:smooth;scrollbar-width:thin;scrollbar-color:#cde8d8 transparent;overscroll-behavior:contain}
+.msg{width:auto;max-width:min(680px,80%);padding:13px 15px;border-radius:18px;line-height:1.55;font-size:15px;box-shadow:0 8px 22px rgba(13,34,25,.04);overflow-wrap:anywhere;word-break:break-word}
+.user{align-self:flex-end;background:#0d2219;color:white;border-bottom-right-radius:8px}
+.bot{align-self:flex-start;background:#f2fbf6;border:1px solid #d5eadf;color:#16372a;border-bottom-left-radius:8px}
+.bot strong{color:#067244}.typing{display:inline-flex;gap:4px}.typing i{width:7px;height:7px;border-radius:50%;background:#0f9d58;animation:pulse .8s infinite}.typing i:nth-child(2){animation-delay:.13s}.typing i:nth-child(3){animation-delay:.26s}
+.choice-box,.feedback{margin-top:12px;border-top:1px solid var(--line);padding-top:12px;width:100%;max-width:100%;overflow:hidden}.choice-title{font-weight:950;color:#067244;overflow-wrap:anywhere}.chips,.fb-row{display:flex;flex-wrap:wrap;gap:8px;margin-top:9px;max-width:100%;align-items:center}
+.chip{max-width:100%;white-space:normal;border:1px solid #ccebd9;background:white;color:#067244;border-radius:999px;padding:8px 12px;font-weight:850;cursor:pointer;text-decoration:none;transition:.18s ease}.chip:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(15,157,88,.1)}
+.chip.dark{background:#10201a;color:white;border-color:#10201a}.chip.backchip{background:#eef8f3}
+.fb-row button{max-width:100%;border:1px solid transparent;border-radius:13px;padding:9px 14px;font-weight:950;cursor:pointer;transition:.18s ease}.yes{background:#e8f8ef;color:#067244}.yes.on{background:#0f9d58;color:white;box-shadow:0 0 22px rgba(15,157,88,.28)}.no{background:#fff3f0;color:#b42318}.no.on{background:#ef4444;color:white;box-shadow:0 0 22px rgba(239,68,68,.25)}
+.feel button{background:#fff8df;color:#996800;font-size:19px;min-width:45px;box-shadow:inset 0 0 0 1px rgba(255,204,85,.18)}
+.feel button.on{background:#fff1b8;border-color:#ffd166;box-shadow:0 0 0 3px rgba(255,209,102,.25),0 10px 24px rgba(255,178,35,.22);animation:emojiPop .42s ease both}
+.msg .inline-qs.open{grid-template-columns:1fr;max-height:260px;overflow:auto;background:rgba(255,255,255,.6);padding:10px}
+.msg .q{min-height:auto;padding:11px 12px;font-size:14px}
+.feedback textarea{display:block;width:100%;max-width:100%;min-height:62px;margin-top:10px;border:1px solid var(--line);border-radius:13px;padding:12px;font:inherit;resize:vertical;background:white}.submit{background:#0f9d58!important;color:white!important}.thanks{margin-top:10px;color:#067244;font-weight:950;overflow-wrap:anywhere}.legal-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+@keyframes enter{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}@keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}@keyframes pulse{0%,100%{opacity:.35;transform:translateY(0)}50%{opacity:1;transform:translateY(-3px)}}@keyframes emojiPop{0%{transform:scale(.88)}45%{transform:scale(1.18) rotate(-4deg)}100%{transform:scale(1.05)}}
+@media(max-width:900px){.wrap{padding:20px 12px 62px}.hero,.panel{border-radius:16px;padding:17px}.categories,.inline-qs.open{grid-template-columns:1fr}.cat span{margin-left:0}.msg{max-width:90%;font-size:14px}.bot{max-width:92%}.user{max-width:82%}.chat-head{grid-template-columns:auto minmax(0,1fr)}.chat-head:after{display:none}.support-title{text-align:left}body.help-chat-active .wrap{height:calc(100dvh - 72px);padding:10px}.chat-shell{padding:12px}.chat-head{margin-bottom:8px;padding-bottom:10px}.support-title b{font-size:15px}.support-title span{font-size:12px}h1{font-size:clamp(28px,10vw,42px)}}
+@media(max-width:480px){.wrap{padding-inline:10px}.hero,.panel{padding:14px}.lang{width:100%;justify-content:center}.lang button{padding:9px 10px;font-size:13px}.section-title{display:block}.section-title span{display:block;margin-top:4px}.msg{font-size:13px;padding:10px 11px;border-radius:15px;line-height:1.48}.bot{max-width:92%}.user{max-width:78%}.hero p{font-size:14px}.chat-shell{padding:10px}.chat-head{gap:9px}.back{padding:8px 10px;border-radius:11px;font-size:12px}.support-title b{font-size:14px}.support-title span{font-size:11px;line-height:1.35}.choice-box,.feedback{margin-top:10px;padding-top:10px}.choice-title{font-size:13px}.fb-row button,.chip{padding:7px 11px;font-size:12px}.feel{display:grid;grid-template-columns:repeat(5,minmax(34px,1fr));gap:6px;width:100%}.feel button{min-width:0;padding:8px 5px}.feedback textarea{min-height:56px;font-size:13px}.submit{width:auto}.chips{display:flex;flex-wrap:wrap}.chip{width:auto;border-radius:999px}.msg .inline-qs.open{max-height:190px}.msg .q{font-size:12px;padding:9px 10px}.thanks{font-size:13px}}
+@media(max-width:360px){body.help-chat-active .wrap{padding:8px}.chat-shell{padding:8px}.msg{max-width:94%;font-size:12.5px}.user{max-width:82%}.fb-row button,.chip{font-size:11.5px;padding:7px 9px}.support-title span{display:none}}
+</style>
+</head>
+<body>
+<div class="launch" id="launch"><div class="launch-card"><b>Healthify Help Center</b><span>Premium support experience</span></div></div>
+{% include 'header.html' %}
+<main class="wrap">
+    <section class="hero">
+        <h1>Healthify Help Center</h1>
+        <p id="subtitle">Clear, safe and professional support for every Healthify feature.</p>
+        <div class="lang" aria-label="Language selector">
+            <button data-lang="english" class="active">English</button>
+            <button data-lang="hindi">Hindi</button>
+            <button data-lang="hinglish">Hinglish</button>
+        </div>
+    </section>
+
+    <section class="main-view panel" id="mainView">
+        <h2 class="section-title"><b id="catTitle">Help Topics</b><span id="catHint">Choose a topic to see relevant questions.</span></h2>
+        <div class="categories" id="categories"></div>
+    </section>
+
+    <section class="chat-view panel chat-shell" id="chatView">
+        <div class="chat-head">
+            <button class="back" onclick="showMain()" id="backBtn">Back</button>
+            <div class="support-title"><b id="supportName">Healthify Support</b><span id="supportSub">Your conversation history stays here during this session.</span></div>
+            <span></span>
+        </div>
+        <div class="chat-window" id="chatWindow"></div>
+    </section>
+</main>
+
+<script>
+const CATS=[
+["start","GS"],["mindcare","AI"],["age","WA"],["habits","HC"],["games","HG"],
+["privacy","PS"],["legal","LP"],["premium","PR"],["family","FF"],["general","GQ"]
+];
+const QUESTION_IDS={
+start:["what_healthify","how_work","is_free","create_account","google_signin","edit_profile","delete_account","different"],
+mindcare:["mindcare_what","diagnose","doctor","mindcare_help","conversation_save","languages","specific_answer","emergency"],
+age:["age_what","age_calc","age_diff","age_accuracy","age_improve","age_often","age_factors","age_tips"],
+habits:["habit_work","checkin_work","checkin_why","habit_progress","miss_day","custom_habit","reflection","consistency"],
+games:["games_what","zip_focus","memory_match","cat_reaction","breath_balance","focus_help","daily_reset","score_calc"],
+privacy:["data_secure","sell_data","who_sees","remove_data","protect_privacy","safe_why","replace_medical"],
+legal:["about","privacy_policy","terms","disclaimer","responsible","data_protection"],
+premium:["premium_what","premium_features","free_available","subscription","cancel"],
+family:["family_dashboard","family_add","family_reminders","family_permissions","family_approve","family_insights"],
+general:["go_home","why_disclaimer","mobile_use","offline","contact_support"]
+};
+const TEXT={
+english:{
+subtitle:"Clear, safe and professional support for every Healthify feature.",
+catTitle:"Help Topics",catHint:"Choose a topic to see relevant questions.",support:"Your conversation history stays here during this session.",back:"Back",moreQ:"Would you like to ask another question?",yes:"Yes",no:"No",more:"More",helpful:"Was this helpful?",rate:"Rate your experience",submit:"Submit",thanks:"Thank you. Your feedback helps us improve Healthify.",feedback:"Optional feedback",need:"Tell us what was not clear.",soon:"Coming soon",
+cats:{start:["Getting Started","Start with the basics"],mindcare:["MindCare AI","Safe AI wellness guidance"],age:["Wellness Age","Lifestyle-based estimate"],habits:["Habits & Check-In","Daily consistency tools"],games:["Healthify Games","Focus and engagement games"],privacy:["Privacy & Safety","Data and trust"],legal:["Legal & Policies","Important safety pages"],premium:["Premium & Subscription","Future premium plans"],family:["Family Features","Planned family tools"],general:["General Questions","Common app help"]},
+q:{what_healthify:"What is Healthify?",how_work:"How does Healthify work?",is_free:"Is Healthify free?",create_account:"How do I create an account?",google_signin:"How do I sign in with Google?",edit_profile:"How do I edit my profile?",delete_account:"How do I delete my account?",different:"What makes Healthify different?",mindcare_what:"What is MindCare AI?",diagnose:"Can MindCare AI diagnose diseases?",doctor:"Is MindCare AI a doctor?",mindcare_help:"What can MindCare AI help with?",conversation_save:"Does MindCare AI save conversations?",languages:"How does MindCare AI support languages?",specific_answer:"Why did I receive a specific answer?",emergency:"What should I do in an emergency?",age_what:"What is Wellness Age?",age_calc:"How is Wellness Age calculated?",age_diff:"Why is it different from my actual age?",age_accuracy:"How accurate is Wellness Age?",age_improve:"Can Wellness Age improve over time?",age_often:"How often should I check it?",age_factors:"Which factors affect it?",age_tips:"How can I improve it?",habit_work:"How do habits work?",checkin_work:"How does Daily Check-In work?",checkin_why:"Why should I complete Daily Check-In?",habit_progress:"How does habit progress work?",miss_day:"What happens if I miss a day?",custom_habit:"Can I create custom habits?",reflection:"How does reflection validation work?",consistency:"How can I improve consistency?",games_what:"What are Healthify Games?",zip_focus:"What is Zip Focus?",memory_match:"How does Memory Match work?",cat_reaction:"How does Cat Reaction work?",breath_balance:"How does Breath Balance work?",focus_help:"Do games improve focus?",daily_reset:"Why do games reset daily?",score_calc:"How are scores calculated?",data_secure:"Is my data secure?",sell_data:"Does Healthify sell my data?",who_sees:"Who can see my information?",remove_data:"Can I remove my data?",protect_privacy:"How does Healthify protect privacy?",safe_why:"Why is Healthify safe to use?",replace_medical:"Can Healthify replace medical advice?",about:"About Healthify",privacy_policy:"Privacy Policy",terms:"Terms & Conditions",disclaimer:"Medical Disclaimer",responsible:"Responsible Usage",data_protection:"Data Protection",premium_what:"What is Healthify Premium?",premium_features:"Which features may become premium?",free_available:"Will free features remain available?",subscription:"How do subscriptions work?",cancel:"How can I cancel Premium?",family_dashboard:"What is Family Dashboard?",family_add:"How can I add family members?",family_reminders:"Can I monitor reminders?",family_permissions:"How do permissions work?",family_approve:"Can family members approve access?",family_insights:"What are Family Insights?",go_home:"How do I go back home?",why_disclaimer:"Why does Healthify show disclaimers?",mobile_use:"Can I use Healthify on mobile?",offline:"Does Healthify work offline?",contact_support:"How do I contact support?"}
+},
+hindi:{
+subtitle:"Healthify के हर feature के लिए साफ, सुरक्षित और भरोसेमंद सहायता.",
+catTitle:"Help Topics",catHint:"एक topic चुनें और उससे जुड़े questions देखें.",support:"इस session में आपकी conversation history यहीं रहेगी.",back:"Back",moreQ:"क्या आप एक और question पूछना चाहेंगे?",yes:"हाँ",no:"नहीं",more:"More",helpful:"क्या यह answer helpful था?",rate:"अपना experience rate करें",submit:"Submit",thanks:"धन्यवाद. आपका feedback Healthify को बेहतर बनाने में मदद करता है.",feedback:"Optional feedback",need:"बताएं क्या clear नहीं था.",soon:"जल्द आ रहा है",
+cats:{start:["Getting Started","Basic जानकारी"],mindcare:["MindCare AI","Safe AI wellness guidance"],age:["Wellness Age","Lifestyle-based estimate"],habits:["Habits & Check-In","Daily consistency tools"],games:["Healthify Games","Focus और engagement games"],privacy:["Privacy & Safety","Data और trust"],legal:["Legal & Policies","जरूरी safety pages"],premium:["Premium & Subscription","Future premium plans"],family:["Family Features","Planned family tools"],general:["General Questions","Common app help"]},
+q:{what_healthify:"Healthify क्या है?",how_work:"Healthify कैसे काम करता है?",is_free:"क्या Healthify free है?",create_account:"Account कैसे बनाएं?",google_signin:"Google से sign in कैसे करें?",edit_profile:"Profile कैसे edit करें?",delete_account:"Account delete कैसे करें?",different:"Healthify अलग क्यों है?",mindcare_what:"MindCare AI क्या है?",diagnose:"क्या MindCare AI diagnosis कर सकता है?",doctor:"क्या MindCare AI doctor है?",mindcare_help:"MindCare AI किसमें मदद कर सकता है?",conversation_save:"क्या MindCare AI conversations save करता है?",languages:"MindCare AI languages कैसे support करता है?",specific_answer:"मुझे ऐसा answer क्यों मिला?",emergency:"Emergency में क्या करना चाहिए?",age_what:"Wellness Age क्या है?",age_calc:"Wellness Age कैसे calculate होती है?",age_diff:"यह actual age से अलग क्यों है?",age_accuracy:"Wellness Age कितनी accurate है?",age_improve:"क्या Wellness Age improve हो सकती है?",age_often:"इसे कितनी बार check करना चाहिए?",age_factors:"कौन से factors असर करते हैं?",age_tips:"इसे improve कैसे करें?",habit_work:"Habits कैसे काम करती हैं?",checkin_work:"Daily Check-In कैसे काम करता है?",checkin_why:"Daily Check-In क्यों complete करें?",habit_progress:"Habit progress कैसे track होती है?",miss_day:"एक दिन miss हो जाए तो क्या होगा?",custom_habit:"क्या custom habits बना सकते हैं?",reflection:"Reflection validation कैसे काम करता है?",consistency:"Consistency कैसे improve करें?",games_what:"Healthify Games क्या हैं?",zip_focus:"Zip Focus क्या है?",memory_match:"Memory Match कैसे काम करता है?",cat_reaction:"Cat Reaction कैसे काम करता है?",breath_balance:"Breath Balance कैसे काम करता है?",focus_help:"क्या games focus में मदद करते हैं?",daily_reset:"Games daily reset क्यों होते हैं?",score_calc:"Scores कैसे calculate होते हैं?",data_secure:"क्या मेरा data secure है?",sell_data:"क्या Healthify data sell करता है?",who_sees:"मेरी information कौन देख सकता है?",remove_data:"क्या मैं अपना data remove कर सकता हूँ?",protect_privacy:"Healthify privacy कैसे protect करता है?",safe_why:"Healthify use करना safe क्यों है?",replace_medical:"क्या Healthify medical advice replace कर सकता है?",about:"About Healthify",privacy_policy:"Privacy Policy",terms:"Terms & Conditions",disclaimer:"Medical Disclaimer",responsible:"Responsible Usage",data_protection:"Data Protection",premium_what:"Healthify Premium क्या है?",premium_features:"कौन से features premium हो सकते हैं?",free_available:"क्या free features available रहेंगे?",subscription:"Subscriptions कैसे काम करेंगे?",cancel:"Premium cancel कैसे करें?",family_dashboard:"Family Dashboard क्या है?",family_add:"Family members कैसे add करें?",family_reminders:"क्या reminders monitor कर सकते हैं?",family_permissions:"Permissions कैसे काम करेंगी?",family_approve:"क्या family members access approve करेंगे?",family_insights:"Family Insights क्या हैं?",go_home:"Home पर वापस कैसे जाएं?",why_disclaimer:"Healthify disclaimers क्यों दिखाता है?",mobile_use:"क्या Healthify mobile पर use कर सकते हैं?",offline:"क्या Healthify offline काम करता है?",contact_support:"Support से contact कैसे करें?"}
+},
+hinglish:{
+subtitle:"Healthify ke har feature ke liye clear, safe aur professional help.",
+catTitle:"Help Topics",catHint:"Topic choose karke related questions dekhein.",support:"Is session me aapki conversation history yahin rahegi.",back:"Back",moreQ:"Kya aap ek aur question puchna chahenge?",yes:"Yes",no:"No",more:"More",helpful:"Kya yeh answer helpful tha?",rate:"Apna experience rate karein",submit:"Submit",thanks:"Thank you. Aapka feedback Healthify ko better banane me help karta hai.",feedback:"Optional feedback",need:"Batayein kya clear nahi tha.",soon:"Coming soon",
+cats:{start:["Getting Started","Basic start guide"],mindcare:["MindCare AI","Safe AI wellness guidance"],age:["Wellness Age","Lifestyle-based estimate"],habits:["Habits & Check-In","Daily consistency tools"],games:["Healthify Games","Focus aur engagement games"],privacy:["Privacy & Safety","Data aur trust"],legal:["Legal & Policies","Important safety pages"],premium:["Premium & Subscription","Future premium plans"],family:["Family Features","Planned family tools"],general:["General Questions","Common app help"]},
+q:{what_healthify:"Healthify kya hai?",how_work:"Healthify kaise kaam karta hai?",is_free:"Kya Healthify free hai?",create_account:"Account kaise banayein?",google_signin:"Google se sign in kaise karein?",edit_profile:"Profile kaise edit karein?",delete_account:"Account delete kaise karein?",different:"Healthify different kyu hai?",mindcare_what:"MindCare AI kya hai?",diagnose:"Kya MindCare AI diagnosis kar sakta hai?",doctor:"Kya MindCare AI doctor hai?",mindcare_help:"MindCare AI kis cheez me help karta hai?",conversation_save:"Kya MindCare AI conversations save karta hai?",languages:"MindCare AI language kaise support karta hai?",specific_answer:"Mujhe specific answer kyu mila?",emergency:"Emergency me kya karna chahiye?",age_what:"Wellness Age kya hai?",age_calc:"Wellness Age kaise calculate hoti hai?",age_diff:"Actual age se different kyu hai?",age_accuracy:"Wellness Age kitni accurate hai?",age_improve:"Kya Wellness Age improve ho sakti hai?",age_often:"Kitni baar check karna chahiye?",age_factors:"Kaun se factors affect karte hain?",age_tips:"Improve kaise karein?",habit_work:"Habits kaise work karti hain?",checkin_work:"Daily Check-In kaise work karta hai?",checkin_why:"Daily Check-In kyu complete karein?",habit_progress:"Habit progress kaise track hoti hai?",miss_day:"Day miss ho jaye to kya hoga?",custom_habit:"Custom habits bana sakte hain?",reflection:"Reflection validation kaise work karta hai?",consistency:"Consistency kaise improve karein?",games_what:"Healthify Games kya hain?",zip_focus:"Zip Focus kya hai?",memory_match:"Memory Match kaise work karta hai?",cat_reaction:"Cat Reaction kaise work karta hai?",breath_balance:"Breath Balance kaise work karta hai?",focus_help:"Kya games focus me help karte hain?",daily_reset:"Games daily reset kyu hote hain?",score_calc:"Scores kaise calculate hote hain?",data_secure:"Kya mera data secure hai?",sell_data:"Kya Healthify data sell karta hai?",who_sees:"Meri information kaun dekh sakta hai?",remove_data:"Kya main data remove kar sakta hu?",protect_privacy:"Healthify privacy kaise protect karta hai?",safe_why:"Healthify safe kyu hai?",replace_medical:"Kya Healthify medical advice replace kar sakta hai?",about:"About Healthify",privacy_policy:"Privacy Policy",terms:"Terms & Conditions",disclaimer:"Medical Disclaimer",responsible:"Responsible Usage",data_protection:"Data Protection",premium_what:"Healthify Premium kya hai?",premium_features:"Kaun se features premium ho sakte hain?",free_available:"Free features available rahenge?",subscription:"Subscriptions kaise work karenge?",cancel:"Premium cancel kaise karein?",family_dashboard:"Family Dashboard kya hai?",family_add:"Family members kaise add karein?",family_reminders:"Reminders monitor kar sakte hain?",family_permissions:"Permissions kaise work karengi?",family_approve:"Family members access approve karenge?",family_insights:"Family Insights kya hain?",go_home:"Home par wapas kaise jayein?",why_disclaimer:"Healthify disclaimers kyu dikhata hai?",mobile_use:"Healthify mobile par use kar sakte hain?",offline:"Healthify offline work karta hai?",contact_support:"Support se contact kaise karein?"}
+}};
+const ANSWERS={
+english:{
+what_healthify:"Healthify is a wellness awareness platform that helps users understand habits, reports, games and safe guidance. It is not a diagnosis app and it does not replace doctors, treatment or emergency care.",
+how_work:"Healthify uses the details you provide to show guidance, wellness tools and educational insights. Saved features use your profile data, while AI responses stay awareness-focused and safety-first.",
+is_free:"Current access depends on the features enabled in your app setup. Any future premium plan should clearly show what is free, what is paid and how users can cancel.",
+create_account:"Open the login page, choose Create Account, verify your email if required, then set a strong password. Use a real email so account recovery and security messages can reach you.",
+google_signin:"Use Continue with Google on the login page. If Google sign-in has a provider or redirect issue, email-password login can be used as a backup until the provider settings are corrected.",
+edit_profile:"Open Menu, then User Profile. Add your name, age, height, weight and health-related details carefully because these details help Healthify personalize awareness features.",
+delete_account:"Account deletion should be handled carefully. If a delete option is available, review it before confirming. If not, contact support/admin so your request can be processed safely.",
+different:"Healthify combines wellness awareness, AI guidance, habit-building, games, reports and profile-based tools in one place while keeping clear safety boundaries.",
+mindcare_what:"MindCare AI is Healthify's wellness companion for respectful, concise and safe guidance. It can help explain concerns, habits and next steps, but it is not a doctor.",
+diagnose:"No. MindCare AI cannot diagnose diseases, prescribe medicines or confirm medical conditions. It can only provide awareness and suggest when professional care may be important.",
+doctor:"No. MindCare AI is not a doctor. For serious, persistent or urgent symptoms, consult a qualified healthcare professional.",
+mindcare_help:"It can help with general wellness questions, routine improvement, symptom awareness, stress, sleep, hydration, fitness habits and safer next-step thinking.",
+conversation_save:"Conversation storage depends on the current app setup. Avoid sharing unnecessary sensitive details, and review the Privacy Policy for how data is handled.",
+languages:"MindCare AI is designed to understand English, Hindi and Hinglish, and to respond in the user's preferred style when possible.",
+specific_answer:"The answer depends on your question, context and available app knowledge. If something feels unclear, ask again with more details or consult a professional for medical decisions.",
+emergency:"For emergency symptoms like severe chest pain, breathing difficulty, fainting, stroke signs, severe bleeding or danger to life, contact local emergency services immediately.",
+age_what:"Wellness Age is a lifestyle-based estimate created from self-reported information. It is for awareness and motivation, not a medical biological-age test.",
+age_calc:"It considers age, height, weight, sleep, water intake, exercise, stress, screen time, smoking and alcohol habits to estimate lifestyle impact.",
+age_diff:"It may differ from actual age because lifestyle patterns can make wellness indicators look stronger or weaker than your calendar age.",
+age_accuracy:"It is an educational estimate based on self-reported data. It should be used for awareness, not as a medical measurement.",
+age_improve:"Yes. Improving sleep, activity, hydration, stress management and unhealthy habits can improve the estimate over time.",
+age_often:"Checking once every few weeks is more meaningful than checking many times in one day. Lifestyle changes need time to show progress.",
+age_factors:"Sleep quality, BMI, activity, stress, hydration, screen time, smoking and alcohol are the main factors.",
+age_tips:"Start with simple actions: walk regularly, sleep 7-8 hours, drink enough water, reduce late-night screens and manage stress gently.",
+habit_work:"Habit Builder helps you choose a habit and reflect daily on whether you actually worked on it. It supports accountability without pretending to verify real-world activity.",
+checkin_work:"Daily Check-In lets you quickly record mood, energy, stress, sleep and water status. It gives a short insight based on your selections.",
+checkin_why:"A short check-in builds awareness. It helps users notice patterns and make small improvements before problems feel bigger.",
+habit_progress:"Progress is based on your daily reflection and completion pattern. The goal is consistency, not pressure.",
+miss_day:"Missing a day is not failure. Restart calmly, understand what interrupted the habit and continue with a realistic plan.",
+custom_habit:"Yes, if the app has the custom option enabled. Custom habits should be specific, realistic and easy to track.",
+reflection:"Reflection validation asks practical questions about your effort. It is an accountability tool, not real-world proof.",
+consistency:"Keep the habit small, attach it to a daily routine, track it honestly and avoid trying to change too many things at once.",
+games_what:"Healthify Games are short focus and wellness engagement games. They are designed for positive use and are not diagnostic tools.",
+zip_focus:"Zip Focus is a connect-path puzzle where you connect numbered dots in order and use the board thoughtfully.",
+memory_match:"Memory Match trains attention by asking you to remember card positions and find matching pairs.",
+cat_reaction:"Cat Reaction is a quick reaction game where you tap the cat when it appears. It is meant to be light and fun.",
+breath_balance:"Breath Balance should be used gently. Do not force breathing or breath-holding, and stop if you feel uncomfortable.",
+focus_help:"Games can support engagement and attention practice, but they do not guarantee medical or cognitive improvement.",
+daily_reset:"Daily reset keeps the experience fresh and gives users a reason to return without overloading them.",
+score_calc:"Scores are usually based on time, completion, attempts and personal bests depending on the game.",
+data_secure:"Healthify should handle user data carefully using secure app practices. Users should still avoid sharing unnecessary sensitive information.",
+sell_data:"Healthify should not sell personal health data without clear consent. Review the Privacy Policy for exact rules.",
+who_sees:"Your information should be visible only to authorized systems or users according to app permissions and policy.",
+remove_data:"If data removal is supported, use the account or support flow. Some data may need secure admin processing.",
+protect_privacy:"Healthify uses privacy-focused design, limited collection and clear disclaimers. Exact handling depends on the configured backend and policy.",
+safe_why:"Healthify is safer when users treat it as awareness guidance, not medical diagnosis, prescription or emergency support.",
+replace_medical:"No. Healthify cannot replace qualified medical advice, diagnosis, treatment or emergency services.",
+about:"Healthify is built for wellness awareness, healthier habits and safer self-understanding. It aims to support users without making medical claims.",
+privacy_policy:"The Privacy Policy explains what data may be collected, why it is used, how it is protected and what user choices exist.",
+terms:"Terms & Conditions explain acceptable use, limitations, user responsibilities and platform boundaries.",
+disclaimer:"Healthify provides educational wellness guidance only. It does not diagnose, prescribe, treat or replace professional healthcare.",
+responsible:"Use Healthify for awareness, reflection and better habits. For serious symptoms or decisions, involve a qualified professional.",
+data_protection:"Data protection depends on secure storage, careful access control and transparent privacy practices.",
+premium_what:"Healthify Premium may include advanced tools in the future. It should be offered transparently with clear benefits and pricing.",
+premium_features:"Advanced reports, deeper insights, family tools or premium games may become paid if the app owner enables them.",
+free_available:"Basic awareness features should remain clearly separated from paid features so users are not confused.",
+subscription:"Subscriptions should show price, duration, renewal and cancellation details before purchase.",
+cancel:"Cancellation should be available through the app, payment provider or support flow depending on the final premium setup.",
+family_dashboard:"Family Dashboard is planned as a consent-based area for family wellness insights and reminders.",
+family_add:"Family members should only be added with permission and clear privacy boundaries.",
+family_reminders:"Reminder monitoring may be possible in future versions, but it should be consent-based.",
+family_permissions:"Permissions should decide what each family member can view or manage.",
+family_approve:"Family access should require approval so private information stays protected.",
+family_insights:"Family Insights may summarize trends without exposing unnecessary sensitive details.",
+go_home:"Use the Home button in the top bar or open the menu and select Home.",
+why_disclaimer:"Disclaimers protect users by clearly explaining that Healthify is for awareness and not a replacement for professional care.",
+mobile_use:"Yes. Healthify is designed to work on mobile and desktop when the app is running correctly.",
+offline:"Some pages may open offline, but login, AI responses, saved data and cloud features need server or internet access.",
+contact_support:"Use this Help Center first. For account-specific help, use the support or contact details provided by the Healthify app owner/admin."
+},
+hindi:{},
+hinglish:{}
+};
+ANSWERS.hindi={
+what_healthify:"Healthify एक wellness awareness platform है जो users को habits, reports, games और safe guidance समझने में मदद करता है. यह diagnosis app नहीं है और doctor, treatment या emergency care का replacement नहीं है.",
+how_work:"Healthify आपके दिए गए details के आधार पर guidance, wellness tools और educational insights दिखाता है. AI responses awareness-focused और safety-first रखे जाते हैं.",
+is_free:"Free या premium access app में enabled features पर depend करता है. Future premium plan में free, paid और cancellation details clear दिखनी चाहिए.",
+create_account:"Login page खोलें, Create Account चुनें, जरूरत हो तो email verify करें और strong password set करें. Account recovery के लिए real email use करें.",
+google_signin:"Login page पर Continue with Google use करें. अगर provider या redirect issue आए तो email-password login backup के रूप में use करें.",
+edit_profile:"Menu खोलें और User Profile पर जाएं. Name, age, height, weight और health-related details ध्यान से fill करें ताकि Healthify better personalization दे सके.",
+delete_account:"Account deletion carefully handle होना चाहिए. Delete option available हो तो confirm करने से पहले review करें, नहीं तो support/admin से contact करें.",
+different:"Healthify wellness awareness, AI guidance, habit-building, games, reports और profile-based tools को safety boundaries के साथ एक जगह लाता है.",
+mindcare_what:"MindCare AI Healthify का wellness companion है. यह respectful, concise और safe guidance देता है, लेकिन doctor नहीं है.",
+diagnose:"नहीं. MindCare AI diagnosis, medicine prescription या medical condition confirm नहीं कर सकता. यह केवल awareness और safe next steps में help करता है.",
+doctor:"नहीं. MindCare AI doctor नहीं है. Serious, persistent या urgent symptoms में qualified healthcare professional से consult करें.",
+mindcare_help:"यह wellness questions, routine improvement, symptom awareness, stress, sleep, hydration, fitness habits और safer next steps में help कर सकता है.",
+conversation_save:"Conversation storage current app setup पर depend करता है. Unnecessary sensitive details share न करें और Privacy Policy review करें.",
+languages:"MindCare AI English, Hindi और Hinglish समझने और user की language style में response देने के लिए designed है.",
+specific_answer:"Answer आपके question, context और available app knowledge पर depend करता है. अगर unclear लगे तो more details के साथ दोबारा पूछें.",
+emergency:"Severe chest pain, breathing difficulty, fainting, stroke signs, severe bleeding या life-risk symptoms में तुरंत local emergency service से contact करें.",
+age_what:"Wellness Age self-reported lifestyle information पर based estimate है. यह awareness और motivation के लिए है, medical biological-age test नहीं.",
+age_calc:"यह age, height, weight, sleep, water, exercise, stress, screen time, smoking और alcohol habits को consider करता है.",
+age_diff:"यह actual age से अलग हो सकती है क्योंकि lifestyle patterns wellness indicators को calendar age से stronger या weaker दिखा सकते हैं.",
+age_accuracy:"यह self-reported data पर based educational estimate है. इसे medical measurement की तरह use न करें.",
+age_improve:"हाँ. Sleep, activity, hydration, stress management और unhealthy habits improve करने से estimate बेहतर हो सकती है.",
+age_often:"हर few weeks में check करना daily बार-बार check करने से ज्यादा meaningful है. Lifestyle progress में time लगता है.",
+age_factors:"Sleep quality, BMI, activity, stress, hydration, screen time, smoking और alcohol मुख्य factors हैं.",
+age_tips:"Simple actions से start करें: regular walk, 7-8 hours sleep, enough water, late-night screen कम और gentle stress management.",
+habit_work:"Habit Builder daily reflection से accountability बनाता है. यह real-world activity verify करने का claim नहीं करता.",
+checkin_work:"Daily Check-In mood, energy, stress, sleep और water status quickly record करता है और short insight देता है.",
+checkin_why:"Short check-in awareness build करता है. Users patterns notice करके small improvements कर सकते हैं.",
+habit_progress:"Progress daily reflection और completion pattern पर based है. Goal consistency है, pressure नहीं.",
+miss_day:"एक दिन miss होना failure नहीं है. Calmly restart करें, interruption समझें और realistic plan continue करें.",
+custom_habit:"हाँ, अगर custom option enabled है. Habit specific, realistic और trackable होनी चाहिए.",
+reflection:"Reflection validation practical questions पूछता है. यह accountability tool है, real-world proof नहीं.",
+consistency:"Habit छोटी रखें, daily routine से attach करें, honestly track करें और एक साथ बहुत changes न करें.",
+games_what:"Healthify Games short focus और wellness engagement games हैं. ये diagnostic tools नहीं हैं.",
+zip_focus:"Zip Focus connect-path puzzle है जिसमें numbered dots को order में connect करना होता है.",
+memory_match:"Memory Match attention train करता है by remembering card positions और matching pairs.",
+cat_reaction:"Cat Reaction quick reaction game है जिसमें cat appear होने पर tap करना होता है.",
+breath_balance:"Breath Balance gently use करें. Breathing force न करें और uncomfortable feel हो तो stop करें.",
+focus_help:"Games attention practice और engagement support कर सकते हैं, लेकिन medical improvement guarantee नहीं करते.",
+daily_reset:"Daily reset experience fresh रखता है और users को overload किए बिना return करने की वजह देता है.",
+score_calc:"Scores usually time, completion, attempts और personal best पर depend करते हैं.",
+data_secure:"Healthify user data carefully handle करने के लिए designed है. फिर भी unnecessary sensitive information share न करें.",
+sell_data:"Healthify को clear consent के बिना personal health data sell नहीं करना चाहिए. Exact rules Privacy Policy में देखें.",
+who_sees:"आपकी information app permissions और policy के अनुसार only authorized systems/users को visible होनी चाहिए.",
+remove_data:"Data removal supported हो तो account/support flow use करें. कुछ requests secure admin processing मांग सकती हैं.",
+protect_privacy:"Healthify privacy-focused design, limited collection और clear disclaimers follow करता है. Exact handling backend/policy पर depend करती है.",
+safe_why:"Healthify safe तब है जब उसे awareness guidance की तरह use किया जाए, diagnosis या emergency support की तरह नहीं.",
+replace_medical:"नहीं. Healthify qualified medical advice, diagnosis, treatment या emergency services replace नहीं कर सकता.",
+about:"Healthify wellness awareness, healthier habits और safer self-understanding के लिए बनाया गया है. इसका उद्देश्य support देना है, medical claims करना नहीं.",
+privacy_policy:"Privacy Policy बताती है कि कौन सा data collect हो सकता है, क्यों use होता है, कैसे protect होता है और user choices क्या हैं.",
+terms:"Terms & Conditions acceptable use, limitations, user responsibilities और platform boundaries explain करते हैं.",
+disclaimer:"Healthify educational wellness guidance देता है. यह diagnose, prescribe, treat या professional healthcare replace नहीं करता.",
+responsible:"Healthify को awareness, reflection और better habits के लिए use करें. Serious symptoms या decisions में qualified professional को involve करें.",
+data_protection:"Data protection secure storage, careful access control और transparent privacy practices पर depend करता है.",
+premium_what:"Healthify Premium future में advanced tools के लिए हो सकता है. Pricing और benefits clearly shown होने चाहिए.",
+premium_features:"Advanced reports, deeper insights, family tools या premium games paid हो सकते हैं अगर app owner enable करे.",
+free_available:"Basic awareness features को paid features से clearly separate रखना चाहिए ताकि confusion न हो.",
+subscription:"Subscription में price, duration, renewal और cancellation details purchase से पहले clear होनी चाहिए.",
+cancel:"Cancellation app, payment provider या support flow से हो सकती है, final setup पर depend करेगा.",
+family_dashboard:"Family Dashboard planned consent-based area है for family wellness insights और reminders.",
+family_add:"Family members केवल permission और privacy boundaries के साथ add होने चाहिए.",
+family_reminders:"Future versions में reminder monitoring हो सकती है, लेकिन consent-based होनी चाहिए.",
+family_permissions:"Permissions decide करेंगी कि कौन क्या view या manage कर सकता है.",
+family_approve:"Family access approval-based होना चाहिए ताकि private information protected रहे.",
+family_insights:"Family Insights unnecessary sensitive details expose किए बिना trends summarize कर सकते हैं.",
+go_home:"Top bar का Home button use करें या menu खोलकर Home select करें.",
+why_disclaimer:"Disclaimers users को clear बताते हैं कि Healthify awareness के लिए है, professional care का replacement नहीं.",
+mobile_use:"हाँ. Healthify mobile और desktop दोनों पर काम करने के लिए designed है.",
+offline:"कुछ pages offline open हो सकते हैं, लेकिन login, AI, saved data और cloud features के लिए server/internet चाहिए.",
+contact_support:"पहले Help Center use करें. Account-specific help के लिए Healthify app owner/admin द्वारा दिए गए support/contact details use करें."
+};
+ANSWERS.hinglish={
+...ANSWERS.english,
+what_healthify:"Healthify ek wellness awareness platform hai jo users ko habits, reports, games aur safe guidance samajhne me help karta hai. Ye diagnosis app nahi hai aur doctor, treatment ya emergency care ka replacement nahi hai.",
+how_work:"Healthify aapke diye gaye details ke basis par guidance, wellness tools aur educational insights dikhata hai. AI responses awareness-focused aur safety-first rehte hain.",
+is_free:"Free ya premium access app me enabled features par depend karta hai. Future premium plan me free, paid aur cancellation details clearly dikhni chahiye.",
+create_account:"Login page open karein, Create Account choose karein, required ho to email verify karein aur strong password set karein. Recovery ke liye real email use karein.",
+google_signin:"Login page par Continue with Google use karein. Agar provider ya redirect issue aaye to email-password login backup ke roop me use karein.",
+edit_profile:"Menu open karke User Profile par jayein. Name, age, height, weight aur health-related details carefully fill karein.",
+delete_account:"Account deletion carefully handle hona chahiye. Delete option available ho to confirm se pehle review karein, warna support/admin se contact karein.",
+different:"Healthify wellness awareness, AI guidance, habit-building, games, reports aur profile-based tools ko clear safety boundaries ke sath ek jagah lata hai.",
+mindcare_what:"MindCare AI Healthify ka wellness companion hai. Ye respectful, concise aur safe guidance deta hai, lekin doctor nahi hai.",
+diagnose:"Nahi. MindCare AI diagnosis, medicine prescription ya medical condition confirm nahi kar sakta. Ye sirf awareness aur safe next steps me help karta hai.",
+doctor:"Nahi. MindCare AI doctor nahi hai. Serious, persistent ya urgent symptoms me qualified healthcare professional se consult karein.",
+emergency:"Severe chest pain, breathing difficulty, fainting, stroke signs, severe bleeding ya life-risk symptoms me turant local emergency service se contact karein.",
+age_what:"Wellness Age self-reported lifestyle information par based estimate hai. Ye awareness aur motivation ke liye hai, medical biological-age test nahi.",
+habit_work:"Habit Builder daily reflection se accountability build karta hai. Ye real-world activity verify karne ka claim nahi karta.",
+games_what:"Healthify Games short focus aur wellness engagement games hain. Ye diagnostic tools nahi hain.",
+data_secure:"Healthify user data carefully handle karne ke liye designed hai. Fir bhi unnecessary sensitive information share na karein.",
+replace_medical:"Nahi. Healthify qualified medical advice, diagnosis, treatment ya emergency services replace nahi kar sakta.",
+about:"Healthify wellness awareness, healthier habits aur safer self-understanding ke liye built hai. Iska goal support dena hai, medical claims karna nahi.",
+privacy_policy:"Privacy Policy batati hai ki data kya collect ho sakta hai, kyu use hota hai, kaise protect hota hai aur user choices kya hain.",
+terms:"Terms & Conditions acceptable use, limitations, user responsibilities aur platform boundaries explain karte hain.",
+disclaimer:"Healthify educational wellness guidance deta hai. Ye diagnose, prescribe, treat ya professional healthcare replace nahi karta.",
+responsible:"Healthify ko awareness, reflection aur better habits ke liye use karein. Serious symptoms ya decisions me qualified professional ko involve karein.",
+contact_support:"Pehle Help Center use karein. Account-specific help ke liye Healthify app owner/admin ke diye gaye support/contact details use karein."
+};
+let lang="english",openCat="",chatStarted=false;
+const els={subtitle:document.getElementById("subtitle"),catTitle:document.getElementById("catTitle"),catHint:document.getElementById("catHint"),cats:document.getElementById("categories"),chat:document.getElementById("chatWindow"),main:document.getElementById("mainView"),chatView:document.getElementById("chatView"),supportSub:document.getElementById("supportSub"),backBtn:document.getElementById("backBtn")};
+function t(){return TEXT[lang]||TEXT.english}
+function qText(id){return (t().q&&t().q[id])||TEXT.english.q[id]||id}
+function catText(id){return (t().cats&&t().cats[id])||TEXT.english.cats[id]||[id,""]}
+function answerText(id){return (ANSWERS[lang]&&ANSWERS[lang][id])||ANSWERS.english[id]||"This topic is supported by Healthify with safety-first guidance. Please use it for awareness and consult a qualified professional for medical decisions."}
+function esc(s){return String(s).replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#39;"}[m]))}
+function renderCats(){const p=t();els.subtitle.textContent=p.subtitle;els.catTitle.textContent=p.catTitle;els.catHint.textContent=p.catHint;els.supportSub.textContent=p.support;els.backBtn.textContent=p.back;els.cats.innerHTML=CATS.map(([id,abbr])=>{const c=catText(id);const qs=QUESTION_IDS[id]||[];return `<button class="cat ${openCat===id?'active':''}" onclick="toggleCat('${id}')"><b><em>${abbr}</em>${esc(c[0])}</b><span>${esc(id==='family'?p.soon:c[1])}</span></button>${openCat===id?`<div class="inline-qs open">${qs.map(q=>`<button class="q" onclick="enterChat('${id}','${q}')">${esc(qText(q))}</button>`).join("")}</div>`:""}`}).join("")}
+function toggleCat(id){openCat=openCat===id?"":id;renderCats()}
+function scrollChat(delay=0){
+setTimeout(()=>requestAnimationFrame(()=>{
+els.chat.scrollTo({top:els.chat.scrollHeight,behavior:"smooth"});
+els.chat.lastElementChild?.scrollIntoView({behavior:"smooth",block:"end",inline:"nearest"});
+}),delay);
+}
+function enterChat(cat,qid){document.body.classList.add("help-chat-active");els.main.style.display="none";els.chatView.classList.add("open");ask(cat,qid);setTimeout(()=>els.chatView.scrollIntoView({behavior:"smooth",block:"start"}),50)}
+function showMain(){document.body.classList.remove("help-chat-active");els.chatView.classList.remove("open");els.main.style.display="block";setTimeout(()=>els.main.scrollIntoView({behavior:"smooth"}),50)}
+function ask(cat,qid){chatStarted=true;els.chat.insertAdjacentHTML("beforeend",`<div class="msg user">${esc(qText(qid))}</div><div class="msg bot" id="typing"><span class="typing"><i></i><i></i><i></i></span></div>`);scrollChat();setTimeout(()=>{document.getElementById("typing")?.remove();els.chat.insertAdjacentHTML("beforeend",`<div class="msg bot"><strong>${esc(qText(qid))}</strong><br>${esc(answerText(qid))}${cat==="legal"?legalLinks():""}${feedbackHtml()}${morePrompt()}</div>`);scrollChat();},520)}
+function legalLinks(){return `<div class="legal-links"><a class="chip" href="/about">About Us</a><a class="chip" href="/privacy-policy">Privacy Policy</a><a class="chip" href="/terms">Terms</a></div>`}
+function feedbackHtml(){const p=t();return `<div class="feedback"><div class="choice-title">${esc(p.helpful)}</div><div class="fb-row"><button class="yes" onclick="fbYes(this)">${esc(p.yes)}</button><button class="no" onclick="fbNo(this)">${esc(p.no)}</button></div><div class="fbBox"></div></div>`}
+function chooseFeel(btn){btn.parentElement.querySelectorAll("button").forEach(x=>x.classList.remove("on"));btn.classList.add("on");scrollChat()}
+function fbYes(btn){const box=btn.closest(".feedback").querySelector(".fbBox");btn.classList.add("on");btn.parentElement.querySelector(".no").classList.remove("on");box.innerHTML=`<div class="choice-title" style="margin-top:10px">${esc(t().rate)}</div><div class="fb-row feel">${["😟","😐","🙂","😊","😍"].map(x=>`<button onclick="chooseFeel(this)">${x}</button>`).join("")}</div><textarea placeholder="${esc(t().feedback)}"></textarea><div class="fb-row"><button class="submit" onclick="typeThanks(this)">${esc(t().submit)}</button></div>`;scrollChat()}
+function fbNo(btn){const box=btn.closest(".feedback").querySelector(".fbBox");btn.classList.add("on");btn.parentElement.querySelector(".yes").classList.remove("on");box.innerHTML=`<div class="choice-title" style="margin-top:10px">${esc(t().need)}</div><textarea placeholder="${esc(t().feedback)}"></textarea><div class="fb-row"><button class="submit" onclick="typeThanks(this)">${esc(t().submit)}</button></div>`;scrollChat()}
+function typeThanks(btn){const box=btn.closest(".fbBox");box.innerHTML=`<div class="thanks"></div>`;const el=box.querySelector(".thanks"),txt=t().thanks;let i=0;(function type(){el.textContent=txt.slice(0,i++);scrollChat();if(i<=txt.length)setTimeout(type,20)})()}
+function morePrompt(){const p=t();return `<div class="choice-box"><div class="choice-title">${esc(p.moreQ)}</div><div class="chips"><button class="chip dark" onclick="showAskChoices(false,this)">${esc(p.yes)}</button><button class="chip" onclick="noMore(this)">${esc(p.no)}</button></div><div class="askChoices"></div></div>`}
+function showAskChoices(all,btn){const target=btn.closest(".choice-box").querySelector(".askChoices"),list=all?CATS:CATS.slice(0,5);target.innerHTML=`<div class="chips">${all?`<button class="chip backchip" onclick="showAskChoices(false,this)">${esc(t().back)}</button>`:""}${list.map(([id,abbr])=>`<button class="chip" onclick="showCatQuestions('${id}',this)">${abbr} ${esc(catText(id)[0])}</button>`).join("")}${!all?`<button class="chip" onclick="showAskChoices(true,this)">${esc(t().more)}</button>`:""}</div>`;scrollChat()}
+function showCatQuestions(cat,btn){const box=btn.closest(".askChoices");box.innerHTML=`<div class="chips"><button class="chip backchip" onclick="showAskChoices(false,this)">${esc(t().back)}</button></div><div class="inline-qs open" style="margin-top:8px">${(QUESTION_IDS[cat]||[]).map(q=>`<button class="q" onclick="ask('${cat}','${q}')">${esc(qText(q))}</button>`).join("")}</div>`;scrollChat()}
+function noMore(btn){btn.closest(".choice-box").querySelector(".askChoices").innerHTML=`<div class="thanks">${esc(t().thanks)}</div>`;scrollChat()}
+document.querySelectorAll(".lang button").forEach(b=>b.onclick=()=>{document.querySelectorAll(".lang button").forEach(x=>x.classList.remove("active"));b.classList.add("active");lang=b.dataset.lang;renderCats();});
+window.addEventListener("load",()=>setTimeout(()=>document.getElementById("launch").classList.add("hide"),950));
+renderCats();
+</script>
+</body>
+</html>

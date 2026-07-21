@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Healthify AI</title>
+<link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='favicon.ico') }}">
+<style>
+*{box-sizing:border-box}
+:root{--bg:#07100d;--panel:#0e1a16;--line:#20342c;--green:#0f9d58;--text:#f4fbf7;--muted:#a9bbb3}
+body{margin:0;height:100vh;overflow:hidden;font-family:"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at 20% 0%,rgba(15,157,88,.18),transparent 28%),linear-gradient(180deg,#0b1712,#050807);color:var(--text)}
+.ai-launch{position:fixed;inset:0;z-index:7000;display:flex;align-items:center;justify-content:center;background:radial-gradient(circle at 50% 35%,rgba(15,157,88,.24),transparent 28%),linear-gradient(180deg,#07100d,#020403);transition:opacity .45s ease,visibility .45s ease}.ai-launch.hide{opacity:0;visibility:hidden}.launch-title{padding:18px 24px;border:1px solid rgba(15,157,88,.35);border-radius:18px;background:rgba(255,255,255,.04);color:#eafff2;font-size:26px;font-weight:950;box-shadow:0 0 44px rgba(15,157,88,.22);animation:launchPulse 1.2s ease infinite alternate}
+.chat{height:calc(100vh - 82px);overflow-y:auto;padding:36px 16px 174px;width:100%;margin:auto;scrollbar-width:none}
+.chat::-webkit-scrollbar{display:none}
+.hero{text-align:center;margin:28px auto 38px;max-width:760px;padding:28px;border:1px solid rgba(15,157,88,.2);border-radius:16px;background:rgba(255,255,255,.04);box-shadow:0 25px 70px rgba(0,0,0,.2)}
+.hero h1{font-size:42px;line-height:1.1;margin:0 0 12px}
+.hero p{margin:0;color:var(--muted);line-height:1.75}
+.chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-top:24px}
+.chip{border:1px solid var(--line);background:#0d1814;color:#dff8ea;border-radius:999px;padding:10px 14px;cursor:pointer;font-weight:700}
+.message{margin:22px auto;max-width:960px}.label{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:7px}
+.user{text-align:right}.bubble{display:inline-block;max-width:82%;padding:16px 18px;border-radius:8px;line-height:1.75;text-align:left}
+.user .bubble{background:#18251f;color:white}
+.ai .bubble{background:linear-gradient(135deg,rgba(15,157,88,.18),#0c1612);border:1px solid rgba(15,157,88,.34);box-shadow:0 0 28px rgba(15,157,88,.13)}
+.copy{margin-top:10px;color:var(--muted);font-size:12px;cursor:pointer;font-weight:800}
+.input-box{position:fixed;inset:auto 0 0;z-index:6;padding:16px 18px 14px;background:linear-gradient(0deg,#050807 0%,rgba(5,8,7,.9) 100%);border-top:1px solid var(--line)}
+.inner{width:min(960px,100%);margin:auto;display:grid;grid-template-columns:minmax(0,1fr) 128px;gap:14px;align-items:stretch}
+textarea{width:100%;min-height:72px;max-height:150px;resize:none;border:1px solid #24483a;outline:0;border-radius:14px;background:#0e1a16;color:white;padding:18px 20px;font:inherit;line-height:1.6;scrollbar-width:none;box-shadow:inset 0 0 0 1px rgba(255,255,255,.02),0 12px 32px rgba(0,0,0,.18)}
+textarea::-webkit-scrollbar{display:none}
+textarea::placeholder{color:#82978d}
+button{min-height:72px;border:0;border-radius:14px;background:linear-gradient(135deg,#0f9d58,#16c876);color:white;font-weight:950;padding:0 24px;cursor:pointer;box-shadow:0 14px 34px rgba(15,157,88,.22);font-size:16px}
+button:disabled{opacity:.65;cursor:not-allowed}
+.safety-line{width:min(960px,100%);margin:10px auto 0;color:#90a59b;font-size:12px;line-height:1.5;text-align:center}
+@keyframes launchPulse{from{transform:translateY(6px) scale(.98);opacity:.78}to{transform:translateY(0) scale(1);opacity:1}}
+@media(max-width:700px){.hero h1{font-size:32px}.inner{grid-template-columns:1fr;gap:10px}.bubble{max-width:94%}button{min-height:54px;padding:0 16px}.chat{padding-bottom:224px}.input-box{padding:12px}.safety-line{text-align:center;font-size:11px}.launch-title{font-size:20px}}
+</style>
+</head>
+<body class="hf-ai-page">
+<div class="ai-launch" id="aiLaunch"><div class="launch-title">Healthify MindCare AI</div></div>
+{% include 'header.html' %}
+
+<main class="chat" id="chat">
+    <section class="hero" id="hero">
+        <h1>Healthify MindCare AI</h1>
+        <p>Healthify AI gives simple wellness awareness, symptom context, and practical next steps. It is not a replacement for medical diagnosis.</p>
+        <div class="chips">
+            <button class="chip" onclick="quickAsk('Stress aur overthinking ho rahi hai')">Stress</button>
+            <button class="chip" onclick="quickAsk('Sleep issue ho raha hai')">Sleep</button>
+            <button class="chip" onclick="quickAsk('Weakness feel ho rahi hai')">Weakness</button>
+            <button class="chip" onclick="quickAsk('Pet me gas aur burning ho rahi hai')">Digestion</button>
+            <button class="chip" onclick="quickAsk('Mujhe fever lag raha hai')">Fever</button>
+        </div>
+    </section>
+</main>
+
+<div class="input-box">
+    <div class="inner">
+        <textarea id="input" placeholder="Talk about your health..."></textarea>
+        <button id="sendBtn" onclick="send()">Send</button>
+    </div>
+    <div class="safety-line">Healthify MindCare AI can make mistakes and is for awareness only. It does not diagnose, prescribe, or replace qualified medical care.</div>
+</div>
+
+<script>
+const chat=document.getElementById("chat");
+const sendBtn=document.getElementById("sendBtn");
+const input=document.getElementById("input");
+let isGenerating=false;
+function escapeHtml(text){return text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>");}
+function scrollBottom(){chat.scrollTop=chat.scrollHeight;}
+function hideHero(){const hero=document.getElementById("hero");if(hero)hero.remove();}
+function addUser(text){hideHero();chat.insertAdjacentHTML("beforeend",`<div class="message user"><div class="label">You</div><div class="bubble">${escapeHtml(text)}</div></div>`);scrollBottom();}
+function addAIPlaceholder(){chat.insertAdjacentHTML("beforeend",`<div class="message ai"><div class="label">Healthify MindCare AI</div><div class="bubble">Understanding your situation safely...</div></div>`);scrollBottom();}
+function showAnswer(text){
+    const items=chat.querySelectorAll(".message.ai");
+    const last=items[items.length-1];
+    if(!last)return;
+    const bubble=last.querySelector(".bubble");
+    bubble.innerHTML="";
+    const answer=document.createElement("div");
+    bubble.appendChild(answer);
+    let i=0;
+    function type(){
+        if(i<text.length){
+            answer.innerHTML+=escapeHtml(text.charAt(i));
+            i++;
+            scrollBottom();
+            setTimeout(type,7);
+        }else{
+            bubble.insertAdjacentHTML("beforeend",`<div class="copy" onclick="copyText(this)">Copy</div>`);
+        }
+    }
+    type();
+}
+function copyText(el){navigator.clipboard.writeText(el.parentElement.innerText.replace("Copy","").trim());el.innerText="Copied";}
+async function send(){
+    if(isGenerating)return;
+    const text=input.value.trim();
+    if(!text)return;
+    isGenerating=true;sendBtn.disabled=true;input.value="";input.style.height="58px";
+    addUser(text);addAIPlaceholder();
+    try{
+        const res=await fetch("/search-ai",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:text})});
+        const data=await res.json();
+        showAnswer(data.answer||"Please try again.");
+    }catch(e){showAnswer("Something went wrong. Please try again.");}
+    isGenerating=false;sendBtn.disabled=false;
+}
+function quickAsk(text){input.value=text;send();}
+input.addEventListener("keydown",e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send();}});
+input.addEventListener("input",()=>{input.style.height="58px";input.style.height=input.scrollHeight+"px";});
+const firstQuery=new URLSearchParams(window.location.search).get("q");
+if(firstQuery){setTimeout(()=>{input.value=firstQuery;send();},0);}
+window.addEventListener("load",()=>setTimeout(()=>document.getElementById("aiLaunch")?.classList.add("hide"),1200));
+</script>
+</body>
+</html>

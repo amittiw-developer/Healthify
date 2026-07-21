@@ -1,0 +1,122 @@
+/* VIP Premium Global Theme (Oura / Apple Health Inspired) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+
+:root {
+    --bg-dark: #0B0F14;
+    --surface-dark: #121821;
+    --card-dark: rgba(18,24,33,0.85);
+    --border-dark: rgba(255,255,255,0.08);
+    --text-primary: #FFFFFF;
+    --text-secondary: #B8C1CC;
+    --accent-green: #10a466;
+    --accent-green-hover: #16c57a;
+    
+    /* Legacy override mappings */
+    --ink: var(--text-primary) !important;
+    --muted: var(--text-secondary) !important;
+    --line: var(--border-dark) !important;
+    --soft: var(--bg-dark) !important;
+}
+
+body, html {
+    background-color: var(--bg-dark) !important;
+    background-image: none !important;
+    color: var(--text-primary) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    transition: opacity 0.4s ease-in-out;
+}
+
+h1, h2, h3, h4, h5, h6, .welcome {
+    font-family: 'Outfit', sans-serif !important;
+    color: var(--text-primary) !important;
+}
+
+/* Force dark mode on specific structures */
+.app, .layout, .shell {
+    background: transparent !important;
+}
+
+/* Card System & Glassmorphism */
+.card, .panel, .tool, .big-card, .metric, .insight, .task, .rhythm, .wellness, .trust, .search {
+    background: var(--card-dark) !important;
+    border: 1px solid var(--border-dark) !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.4) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Text overrides inside cards */
+.card p, .tool p, .big-card span, .task span, .insight small, .trust-item span, .sub, .lead {
+    color: var(--text-secondary) !important;
+}
+
+/* Input System */
+input, textarea, select {
+    background: rgba(0,0,0,0.3) !important;
+    border: 1px solid var(--border-dark) !important;
+    color: var(--text-primary) !important;
+}
+input::placeholder, textarea::placeholder {
+    color: var(--text-secondary) !important;
+}
+input:focus, textarea:focus {
+    border-color: var(--accent-green) !important;
+    outline: none !important;
+}
+
+/* Button System */
+.btn, .upgrade, .primary {
+    background: var(--accent-green) !important;
+    color: #fff !important;
+    border: none !important;
+    transition: all 0.3s ease !important;
+}
+.btn:hover, .upgrade:hover, .primary:hover {
+    background: var(--accent-green-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(16,164,102,0.4) !important;
+}
+
+.chip {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid var(--border-dark) !important;
+    color: var(--text-secondary) !important;
+}
+.chip:hover {
+    background: rgba(255,255,255,0.1) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Topbar & Navigation */
+.hf-topbar, .top-nav, .mobile-tabs {
+    background: rgba(11, 15, 20, 0.85) !important;
+    border-bottom: 1px solid var(--border-dark) !important;
+    border-top: 1px solid var(--border-dark) !important;
+    backdrop-filter: blur(16px) !important;
+    -webkit-backdrop-filter: blur(16px) !important;
+}
+
+.hf-menu-btn, .hf-home-btn, .hf-profile-btn {
+    background: rgba(255,255,255,0.05) !important;
+    border: 1px solid var(--border-dark) !important;
+    color: var(--text-primary) !important;
+}
+
+/* SVGs */
+svg {
+    filter: drop-shadow(0px 2px 4px rgba(0,0,0,0.5));
+}
+
+/* Fix specific green icons to glow in dark mode */
+.green, .check {
+    background: rgba(16, 164, 102, 0.15) !important;
+    color: var(--accent-green-hover) !important;
+    border: 1px solid rgba(16, 164, 102, 0.3) !important;
+}
+
+/* Smooth Transition Classes */
+.page-fade-out {
+    opacity: 0 !important;
+    pointer-events: none;
+}

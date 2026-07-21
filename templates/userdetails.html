@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Health Insight | Healthify</title>
+<style>
+*{box-sizing:border-box}
+:root{--ink:#0f2233;--muted:#617089;--green:#12a66a;--green-dark:#08784a;--line:#dfe8e4;--soft:#f6fbf8;--wash:#eef8f3}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;color:var(--ink);background:radial-gradient(circle at 16% 0%,rgba(18,166,106,.13),transparent 28%),linear-gradient(180deg,#f6fbf8,#eef6f2)}
+.wrap{width:min(1080px,100%);margin:auto;padding:30px 16px 70px}
+.shell{background:rgba(255,255,255,.94);border:1px solid var(--line);border-radius:24px;box-shadow:0 26px 80px rgba(19,45,34,.13);padding:34px 34px 28px}
+.top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
+.brand{display:flex;align-items:center;gap:13px}.logo-mark{width:43px;height:43px;border-radius:14px;background:#ecfbf3;color:var(--green);display:grid;place-items:center}.logo-mark svg{width:25px;height:25px;stroke:currentColor;stroke-width:2.2;fill:none}.brand-name{font-size:24px;font-weight:950;color:#073f2a}
+.pill{display:inline-flex;align-items:center;gap:8px;padding:10px 14px;border:1px solid var(--line);border-radius:10px;background:#f8fcfa;color:#15324a;font-weight:850;font-size:14px}
+h1{margin:24px 0 8px;font-size:34px;line-height:1.15;color:#073f2a;letter-spacing:0}.sub{max-width:760px;margin:0;color:#4f6177;line-height:1.65}
+.trust-row{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:28px 0}.trust{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;background:white;padding:16px;font-weight:850;color:#17334b}.mini-icon,.section-icon,.input-icon{flex:0 0 auto;display:grid;place-items:center;background:#ecfbf3;color:var(--green-dark)}.mini-icon{width:30px;height:30px;border-radius:9px}.section-icon{width:48px;height:48px;border-radius:14px}.input-icon{width:28px;height:28px;border-radius:8px}.mini-icon svg,.section-icon svg,.input-icon svg{width:18px;height:18px;stroke:currentColor;stroke-width:2.2;fill:none;stroke-linecap:round;stroke-linejoin:round}.section-icon svg{width:24px;height:24px}
+.safe{display:flex;align-items:center;gap:12px;margin:0 0 30px;border:1px solid #bfe8d1;background:linear-gradient(90deg,#eaf8f0,#f8fffb);border-radius:12px;padding:16px;color:#08784a;font-weight:750;line-height:1.55}
+.section{border:1px solid var(--line);border-radius:16px;background:white;box-shadow:0 14px 38px rgba(20,33,28,.06);padding:22px;margin-top:22px}.section-head{display:flex;align-items:center;gap:16px;margin-bottom:18px}.section-title{font-size:20px;font-weight:950;color:#10243a}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px}.wide{grid-column:1/-1}
+label{display:block;font-size:13px;font-weight:850;color:#253b52;margin-bottom:9px}.control{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:12px;background:#fff;padding:0 12px;min-height:58px;transition:.18s}.control:focus-within{border-color:var(--green);box-shadow:0 0 0 4px rgba(18,166,106,.11)}
+input,select,textarea{width:100%;border:0;outline:0;background:transparent;font:inherit;color:#10243a;min-width:0}select{appearance:auto}textarea{min-height:105px;resize:vertical;padding:16px 0;line-height:1.55}.textarea-control{align-items:flex-start}
+::placeholder{color:#8a96a6}.generate{width:100%;margin-top:26px;border:0;border-radius:13px;min-height:64px;background:linear-gradient(90deg,#0b8f53,#19c879);color:white;font-size:17px;font-weight:950;cursor:pointer;box-shadow:0 18px 40px rgba(18,166,106,.24)}.generate:hover{filter:brightness(.98);transform:translateY(-1px)}
+.privacy{text-align:center;margin-top:14px;color:#98a3ae;font-size:13px;font-weight:700}.loading{position:fixed;inset:0;background:rgba(255,255,255,.96);display:none;justify-content:center;align-items:center;flex-direction:column;z-index:9999;color:#17334b}.spinner{width:68px;height:68px;border:6px solid #e1eee8;border-top:6px solid var(--green);border-radius:50%;animation:spin 1s linear infinite}@keyframes spin{to{transform:rotate(360deg)}}
+@media(max-width:820px){.shell{padding:24px 18px;border-radius:18px}.top{display:grid}.pill{justify-content:center}.trust-row,.grid{grid-template-columns:1fr}h1{font-size:29px}.section{padding:18px}.wide{grid-column:auto}}
+@media(max-width:460px){.wrap{padding-inline:10px}.brand-name{font-size:21px}.section-head{align-items:flex-start}.generate{min-height:58px;font-size:15px}}
+</style>
+</head>
+<body>
+{% include 'header.html' %}
+<svg width="0" height="0" style="position:absolute">
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 20c1.8-4 14.2-4 16 0"/></symbol>
+  <symbol id="i-calendar" viewBox="0 0 24 24"><path d="M7 3v4M17 3v4M4 9h16M5 5h14v15H5z"/></symbol>
+  <symbol id="i-users" viewBox="0 0 24 24"><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM2 21c1.5-4 12.5-4 14 0M17 11a3 3 0 1 0 0-6M16 15c2.5.3 4.5 1.5 5.5 3.5"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-6.1 7-12a7 7 0 0 0-14 0c0 5.9 7 12 7 12z"/><circle cx="12" cy="9" r="2"/></symbol>
+  <symbol id="i-bag" viewBox="0 0 24 24"><path d="M7 8h10l1 12H6L7 8z"/><path d="M9 8a3 3 0 0 1 6 0"/></symbol>
+  <symbol id="i-ruler" viewBox="0 0 24 24"><path d="M4 17 17 4l3 3L7 20z"/><path d="m14 7 3 3M11 10l2 2M8 13l3 3"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M20.8 5.6a5.5 5.5 0 0 0-7.8 0L12 6.6l-1-1a5.5 5.5 0 0 0-7.8 7.8L12 22l8.8-8.6a5.5 5.5 0 0 0 0-7.8z"/></symbol>
+  <symbol id="i-pill" viewBox="0 0 24 24"><path d="M10 21 21 10a5 5 0 0 0-7-7L3 14a5 5 0 0 0 7 7z"/><path d="m8 12 4 4"/></symbol>
+  <symbol id="i-steth" viewBox="0 0 24 24"><path d="M6 3v6a4 4 0 0 0 8 0V3M4 3h4M12 3h4"/><path d="M10 13v2a5 5 0 0 0 10 0v-2"/><circle cx="20" cy="11" r="2"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4h12l-1.5 4L17 12H5"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-5"/></symbol>
+  <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11 12 3l9 8"/><path d="M5 10v10h14V10"/><path d="M9 20v-6h6v6"/></symbol>
+  <symbol id="i-droplet" viewBox="0 0 24 24"><path d="M12 3s7 7 7 12a7 7 0 0 1-14 0c0-5 7-12 7-12z"/></symbol>
+  <symbol id="i-run" viewBox="0 0 24 24"><circle cx="13" cy="4" r="2"/><path d="m9 21 3-6-3-3 4-4 2 3h4M15 21l-3-6"/></symbol>
+  <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 15.5A8.5 8.5 0 0 1 8.5 4 8.5 8.5 0 1 0 20 15.5z"/></symbol>
+  <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M4 12h16a8 8 0 0 1-16 0z"/><path d="M7 12c0-3 10-3 10 0"/></symbol>
+</svg>
+<main class="wrap">
+  <section class="shell">
+    <div class="top">
+      <div class="brand"><div class="logo-mark"><svg><use href="#i-heart"/></svg></div><div class="brand-name">Healthify</div></div>
+      <div class="pill"><span class="mini-icon"><svg><use href="#i-shield"/></svg></span>Your health, your priority</div>
+    </div>
+    <h1>Personal Health Insight</h1>
+    <p class="sub">Create a clear awareness report from symptoms, lifestyle, routines, and health context. You can use it to understand your health signals or explain concerns better to a qualified doctor.</p>
+    <div class="trust-row">
+      <div class="trust"><span class="mini-icon"><svg><use href="#i-shield"/></svg></span>Context-aware report</div>
+      <div class="trust"><span class="mini-icon"><svg><use href="#i-home"/></svg></span>Safe home guidance</div>
+      <div class="trust"><span class="mini-icon"><svg><use href="#i-steth"/></svg></span>Doctor referral when relevant</div>
+    </div>
+    <div class="safe"><span class="mini-icon"><svg><use href="#i-shield"/></svg></span>Your information is safe and confidential. It is used only to generate your health insight.</div>
+
+    <form id="userDetailsForm">
+      <section class="section">
+        <div class="section-head"><div class="section-icon"><svg><use href="#i-user"/></svg></div><div class="section-title">Basic Details</div></div>
+        <div class="grid">
+          <div><label>Name</label><div class="control"><span class="input-icon"><svg><use href="#i-user"/></svg></span><input type="text" id="name" required placeholder="Enter your full name"></div></div>
+          <div><label>Age</label><div class="control"><span class="input-icon"><svg><use href="#i-calendar"/></svg></span><input type="number" id="age" required min="1" max="122" placeholder="Enter your age"></div></div>
+          <div><label>Gender</label><div class="control"><span class="input-icon"><svg><use href="#i-users"/></svg></span><select id="gender" required><option value="">Select gender</option><option>Male</option><option>Female</option><option>Other</option><option>Prefer not to say</option></select></div></div>
+          <div><label>City</label><div class="control"><span class="input-icon"><svg><use href="#i-pin"/></svg></span><input type="text" id="location" required placeholder="Enter your city"></div></div>
+          <div><label>Weight (kg)</label><div class="control"><span class="input-icon"><svg><use href="#i-bag"/></svg></span><input type="number" id="weight" min="1" step="0.1" placeholder="Enter weight in kg"></div></div>
+          <div><label>Height (cm)</label><div class="control"><span class="input-icon"><svg><use href="#i-ruler"/></svg></span><input type="number" id="height_cm" min="30" step="0.1" placeholder="Enter height in cm"></div></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><div class="section-icon"><svg><use href="#i-heart"/></svg></div><div class="section-title">Medical Background</div></div>
+        <div class="grid">
+          <div><label>Any past condition?</label><div class="control"><span class="input-icon"><svg><use href="#i-heart"/></svg></span><select id="disease"><option value="no">No</option><option value="yes">Yes</option></select></div></div>
+          <div><label>Current medication?</label><div class="control"><span class="input-icon"><svg><use href="#i-pill"/></svg></span><input id="medicines" placeholder="Optional"></div></div>
+          <div class="wide"><div class="control" id="diseaseWrap" style="display:none;"><span class="input-icon"><svg><use href="#i-steth"/></svg></span><input type="text" id="disease_detail" placeholder="Example: BP, diabetes, surgery, thyroid, allergies"></div></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><div class="section-icon"><svg><use href="#i-steth"/></svg></div><div class="section-title">Current Concern</div></div>
+        <div class="grid">
+          <div class="wide"><label>Describe what you feel</label><div class="control textarea-control"><textarea id="symptoms" required placeholder="Example: fever, headache, stress, sleep issue, relationship stress, stomach pain..."></textarea></div></div>
+          <div><label>Since when</label><div class="control"><span class="input-icon"><svg><use href="#i-calendar"/></svg></span><select id="duration"><option>Today</option><option>1-2 days</option><option>3-5 days</option><option>More than a week</option><option>Long term</option></select></div></div>
+          <div><label>Pain / discomfort level</label><div class="control"><span class="input-icon"><svg><use href="#i-run"/></svg></span><select id="pain"><option>Mild</option><option>Moderate</option><option>Strong</option><option>No physical pain</option></select></div></div>
+          <div><label>Any red flag?</label><div class="control"><span class="input-icon"><svg><use href="#i-flag"/></svg></span><select id="red_flag"><option>No</option><option>Chest pain</option><option>Breathing difficulty</option><option>Fainting</option><option>Severe bleeding</option><option>Self-harm thoughts</option></select></div></div>
+          <div><label>Main concern type</label><div class="control"><span class="input-icon"><svg><use href="#i-user"/></svg></span><select id="concern_type"><option>Physical symptoms</option><option>Mental wellness</option><option>Lifestyle improvement</option><option>Relationship or family stress</option><option>Not sure</option></select></div></div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-head"><div class="section-icon"><svg><use href="#i-run"/></svg></div><div class="section-title">Daily Routine</div></div>
+        <div class="grid">
+          <div><label>Sleep</label><div class="control"><span class="input-icon"><svg><use href="#i-moon"/></svg></span><select id="sleep"><option>Less than 5 hrs</option><option>6-7 hrs</option><option>7-8 hrs</option><option>8+ hrs</option></select></div></div>
+          <div><label>Physical activity</label><div class="control"><span class="input-icon"><svg><use href="#i-run"/></svg></span><select id="exercise"><option>Regular</option><option>Sometimes</option><option>Rare</option><option>None</option></select></div></div>
+          <div><label>Water intake</label><div class="control"><span class="input-icon"><svg><use href="#i-droplet"/></svg></span><select id="water_intake"><option>Very low</option><option>1-2 litre</option><option>2-3 litre</option><option>Good hydration</option></select></div></div>
+          <div><label>Food pattern</label><div class="control"><span class="input-icon"><svg><use href="#i-bowl"/></svg></span><select id="food_pattern"><option>Balanced</option><option>Irregular meals</option><option>High junk food</option><option>Low appetite</option><option>Not sure</option></select></div></div>
+          <div class="wide"><label>Stress or emotional context</label><div class="control textarea-control"><textarea id="stress_context" placeholder="Optional: work stress, family stress, loneliness, overthinking..."></textarea></div></div>
+        </div>
+      </section>
+
+      <button type="submit" class="generate">Generate Personal Health Insight</button>
+      <div class="privacy">We prioritize your privacy and data security.</div>
+    </form>
+  </section>
+</main>
+<div class="loading" id="loading"><div class="spinner"></div><p>Healthify is preparing your personal health insight...</p></div>
+<script>
+const diseaseSelect=document.getElementById('disease'),diseaseWrap=document.getElementById('diseaseWrap');
+diseaseSelect.onchange=function(){diseaseWrap.style.display=this.value==='yes'?'flex':'none';};
+document.getElementById("userDetailsForm").addEventListener("submit",function(e){
+ e.preventDefault();
+ const required=["name","age","gender","location","symptoms"];
+ if(required.some(id=>!document.getElementById(id).value.trim())){alert("Please fill all required fields");return;}
+ document.getElementById("loading").style.display="flex";
+ const ids=["name","age","gender","location","weight","height_cm","disease_detail","medicines","symptoms","duration","pain","red_flag","concern_type","sleep","exercise","water_intake","food_pattern","stress_context"];
+ const data={disease:diseaseSelect.value};ids.forEach(id=>data[id]=document.getElementById(id).value);
+ fetch('/analyze',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(res=>{if(!res.ok)throw new Error('failed');return res.json();}).then(()=>window.location.replace("/analyzing")).catch(()=>{document.getElementById("loading").style.display="none";alert("Please try again.");});
+});
+</script>
+</body>
+</html>

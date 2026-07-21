@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Google Sign-In | Healthify</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px;font-family:"Segoe UI",Arial,sans-serif;background:linear-gradient(135deg,#f7fbf8,#e5f5ed);color:#10201a}.card{width:min(440px,100%);background:white;border:1px solid #dbe9e2;border-radius:14px;padding:28px;text-align:center;box-shadow:0 24px 70px rgba(16,32,26,.13)}.ring{width:58px;height:58px;border-radius:50%;border:5px solid #dcebe4;border-top-color:#0f9d58;margin:0 auto 16px;animation:spin 1s linear infinite}h1{font-size:24px;margin:0 0 8px;color:#0f9d58}.sub{color:#60746b;line-height:1.6}@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<main class="card">
+    <div class="ring"></div>
+    <h1>Completing Google Sign-In</h1>
+    <p class="sub" id="msg">Please wait while Healthify securely prepares your profile.</p>
+</main>
+<script>
+async function finishGoogle(){
+    const params=new URLSearchParams(location.hash.replace(/^#/,""));
+    const access_token=params.get("access_token");
+    const refresh_token=params.get("refresh_token");
+    const msg=document.getElementById("msg");
+    if(!access_token||!refresh_token){
+        msg.textContent="Google sign-in details were not received. Please try Continue with Google again.";
+        setTimeout(()=>location.replace("/login"),1800);
+        return;
+    }
+    try{
+        const res=await fetch("/google-profile-sync",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({access_token,refresh_token})});
+        const data=await res.json();
+        if(res.ok){location.replace(data.redirect||"/home");return;}
+        msg.textContent=data.message||"Google sign-in could not be completed. Please try again.";
+    }catch(e){
+        msg.textContent="Google sign-in could not be completed. Please try again.";
+    }
+    setTimeout(()=>location.replace("/login"),1800);
+}
+finishGoogle();
+</script>
+</body>
+</html>

@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Healthify Games</title>
+<style>
+*{box-sizing:border-box;min-width:0}
+:root{--green:#0f9d58;--green2:#09a6d7;--dark:#10201a;--muted:#5f746b;--line:#dbe9e2;--soft:#f6fbf8;--gold:#f4b41b}
+html,body{width:100%;max-width:100%;overflow-x:hidden}
+body{margin:0;font-family:"Segoe UI",Arial,sans-serif;background:radial-gradient(circle at 8% 0%,rgba(15,157,88,.12),transparent 26%),linear-gradient(180deg,#f8fcfa,#eaf6f1);color:var(--dark)}
+.wrap{width:min(1120px,100%);margin:auto;padding:28px 16px 72px}
+.hero,.card,.game-view{background:rgba(255,255,255,.92);border:1px solid var(--line);border-radius:16px;box-shadow:0 18px 54px rgba(16,32,26,.08)}
+.hero{padding:26px}.kicker{font-size:12px;color:#067244;font-weight:950;text-transform:uppercase;letter-spacing:.04em}.hero h1{margin:8px 0 8px;font-size:clamp(34px,5vw,56px);line-height:1.08}.sub{margin:0;color:var(--muted);line-height:1.65}
+.top{display:grid;grid-template-columns:1.1fr .9fr;gap:16px;margin-top:16px}.card{padding:20px}.card h2{margin:0 0 8px;font-size:22px}
+.streak{display:grid;grid-template-columns:repeat(7,1fr);gap:8px;margin-top:14px}.day{min-height:46px;display:grid;place-items:center;text-align:center;border-radius:12px;background:#eef6f2;border:1px solid var(--line);font-size:12px;font-weight:950;color:#315047}.day.done{background:linear-gradient(135deg,#0f9d58,#22c97a);color:white;box-shadow:0 10px 24px rgba(15,157,88,.18)}
+.gift{width:92px;height:92px;border-radius:26px;margin:14px 0;background:linear-gradient(135deg,#fff7cc,#f59e0b);display:grid;place-items:center;font-size:42px;cursor:pointer;box-shadow:0 0 34px rgba(245,158,11,.26);animation:floatGift 1.8s ease-in-out infinite}
+.game-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:14px;margin-top:16px}.game-card{border:1px solid var(--line);background:white;border-radius:16px;overflow:hidden;text-align:left;cursor:pointer;transition:.2s;box-shadow:0 12px 34px rgba(16,32,26,.05)}.game-card:hover{transform:translateY(-4px);box-shadow:0 18px 44px rgba(16,32,26,.1)}.art{height:116px;display:grid;place-items:center;font-size:42px;color:white;font-weight:950}.a1{background:linear-gradient(135deg,#0f9d58,#06b6d4)}.a2{background:linear-gradient(135deg,#7c3aed,#ec4899)}.a3{background:linear-gradient(135deg,#2563eb,#22c55e)}.a4{background:linear-gradient(135deg,#f97316,#facc15)}.a5{background:linear-gradient(135deg,#111827,#475569)}.a6{background:linear-gradient(135deg,#0f172a,#14b8a6)}.game-card-body{padding:14px}.game-card h3{margin:0 0 8px;font-size:18px}.stat{font-size:12px;color:#067244;font-weight:900;margin-top:8px}
+.game-view{display:none;margin-top:16px;padding:16px;overflow:hidden}.game-view.open{display:block}.game-top{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;gap:12px}.icon-btn,.btn{border:0;border-radius:12px;font-weight:950;cursor:pointer}.icon-btn{width:46px;height:46px;background:#eef8f3;color:#067244;font-size:22px;display:grid;place-items:center}.game-title{text-align:center;min-width:0}.game-title .kicker{font-size:11px}.game-title h1{margin:2px 0 0;font-size:clamp(24px,5vw,40px);line-height:1.08;overflow-wrap:anywhere}.timer-pill{min-width:82px;padding:12px 14px;text-align:center;border:1px dashed #b9d9c8;border-radius:14px;background:#f6fbf8;font-weight:950;font-variant-numeric:tabular-nums}
+.status{margin:14px auto 0;width:min(760px,100%);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:11px 14px;border:1px solid #d7eadf;border-radius:14px;background:#fbfefd;color:#067244;font-weight:900}.controls{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin:14px 0}.btn{min-height:46px;padding:0 20px;background:var(--green);color:white}.btn.dark{background:#10201a}.btn.light{background:#eef8f3;color:#067244}.btn:disabled{opacity:.55;cursor:not-allowed}
+#gameArea{display:grid;place-items:center;width:100%;min-height:220px;overflow:hidden;touch-action:none;overscroll-behavior:contain;-webkit-user-select:none;user-select:none}.result{min-height:24px;margin:10px auto 0;width:min(760px,100%);color:#067244;font-weight:950;line-height:1.45;overflow-wrap:anywhere}.how-panel{width:min(760px,100%);margin:16px auto 0;border:1px solid var(--line);border-radius:14px;background:#fbfdfc;padding:16px}.how-title{font-weight:950;font-size:20px;margin-bottom:12px}.how-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.how-card{border:1px solid #e1ece7;border-radius:14px;background:white;padding:14px;font-weight:900;line-height:1.35}.safe{margin-top:12px;color:#73510d;background:#fff8e7;border:1px solid #f4dfad;border-radius:12px;padding:12px;line-height:1.55}
+.board,#gameArea button,.zip-board,.memory-board,.focus-board,.cat-grid,.breath-circle,.time-game{touch-action:none;-webkit-user-select:none;user-select:none;-webkit-user-drag:none}
+.zip-shell{width:min(100%,clamp(300px,62vmin,520px));display:grid;place-items:center}.zip-board{width:min(100%,clamp(300px,62vmin,500px));aspect-ratio:1;display:grid;grid-template-columns:repeat(7,1fr);grid-template-rows:repeat(7,1fr);gap:2px;padding:7px;border:1px solid #aab8b0;border-radius:22px;background:#e8eeeb;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7),0 20px 50px rgba(16,32,26,.08);position:relative;overflow:hidden}.zip-cell{position:relative;border:1px solid #c9d3ce;background:#fbfdfc;border-radius:9px;display:grid;place-items:center;overflow:hidden;transition:box-shadow .12s ease,transform .12s ease,border-color .12s ease}.zip-cell.active{background:#fbfdfc;border-color:rgba(15,157,88,.35);box-shadow:inset 0 0 0 3px var(--zip-solid,#0f9d58),0 0 18px rgba(8,164,107,.13);transform:scale(1.008)}.zip-cell.active:after{content:"";position:absolute;width:46%;height:46%;border-radius:50%;background:var(--zip-solid,#0f9d58);opacity:.18;box-shadow:0 0 20px var(--zip-solid,#0f9d58);z-index:1}.zip-cell.hint{box-shadow:0 0 0 4px rgba(15,157,88,.26),0 0 24px rgba(15,157,88,.22)}.zip-cell.bad{background:#fff0f0;border-color:#ef4444}.zip-dot{width:clamp(24px,6vw,40px);height:clamp(24px,6vw,40px);border-radius:50%;background:#050807;color:white;display:grid;place-items:center;font-weight:950;font-size:clamp(14px,3.6vw,21px);z-index:5;box-shadow:0 4px 12px rgba(0,0,0,.25)}.zip-cell.active .zip-dot{box-shadow:0 0 0 4px rgba(15,157,88,.16),0 4px 12px rgba(0,0,0,.25)}
+.memory-board{width:min(100%,520px);display:grid;grid-template-columns:repeat(var(--cols),minmax(0,1fr));gap:9px}.mem-card{aspect-ratio:1;border:1px solid #d8e8e0;border-radius:15px;background:linear-gradient(180deg,#f8fdfb,#edf7f2);display:grid;place-items:center;font-size:clamp(16px,5.2vw,30px);font-weight:950;cursor:pointer;transition:transform .22s ease,background .22s ease,box-shadow .22s ease;color:transparent;box-shadow:0 8px 20px rgba(16,32,26,.04);overflow:hidden}.mem-card::before{content:"";width:34%;height:34%;border-radius:50%;background:rgba(15,157,88,.12);box-shadow:0 0 0 7px rgba(15,157,88,.05)}.mem-card.open,.mem-card.matched{color:#10201a;background:white;transform:scale(1.03)}.mem-card.open::before,.mem-card.matched::before{display:none}.mem-card.matched{background:linear-gradient(135deg,#0f9d58,#18c978);color:white;box-shadow:0 0 26px rgba(15,157,88,.24)}.mem-card.locked{color:#0f9d58;background:linear-gradient(180deg,#ecfff5,#dff7ea);cursor:default}.mem-card.locked::before{display:none}
+.focus-board{width:min(100%,430px);display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.focus-tile,.cat-hole{aspect-ratio:1;border:1px solid #d8e8e0;border-radius:16px;background:#f8fdfb;font-size:clamp(22px,6.2vw,34px);font-weight:950;cursor:pointer;box-shadow:0 8px 20px rgba(16,32,26,.04)}.focus-tile.active{background:#0f9d58;color:white}.focus-tile.bad{animation:shake .18s ease}
+.cat-grid{width:min(100%,420px);display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.cat-hole{background:linear-gradient(180deg,#f6fbf8,#dfeae4);font-size:clamp(30px,9vw,48px)}.cat-hole.up{background:#eaf8f0;box-shadow:0 0 0 5px rgba(15,157,88,.15),0 16px 34px rgba(15,157,88,.14)}
+.breath-circle{width:min(240px,62vw);aspect-ratio:1;border-radius:50%;background:radial-gradient(circle,#31d887,#0f9d58);display:grid;place-items:center;color:white;font-size:24px;font-weight:950;box-shadow:0 0 42px rgba(15,157,88,.28);transition:transform 3s ease}.breath-circle.big{transform:scale(1.16)}
+.time-game{width:min(100%,460px);min-height:300px;border:1px solid rgba(15,157,88,.2);border-radius:24px;background:linear-gradient(145deg,rgba(255,255,255,.72),rgba(232,248,240,.82));box-shadow:0 22px 60px rgba(16,32,26,.08),inset 0 0 0 1px rgba(255,255,255,.7);display:grid;place-items:center;padding:24px;text-align:center;overflow:hidden}.time-target{font-size:clamp(22px,6vw,34px);font-weight:950;color:#067244}.time-sub{margin-top:8px;color:var(--muted);font-weight:800}.time-bubble{width:min(190px,52vw);aspect-ratio:1;border-radius:50%;border:0;background:radial-gradient(circle at 35% 30%,#8dffd0,#0f9d58 58%,#067244);color:white;font-size:clamp(26px,8vw,44px);font-weight:950;box-shadow:0 0 0 12px rgba(15,157,88,.1),0 24px 70px rgba(15,157,88,.25);animation:bubblePulse 1.3s ease-in-out infinite;cursor:pointer}.time-bubble.wait{background:radial-gradient(circle,#ffffff,#dcf7e8);color:#067244}.time-bubble.reveal{animation:none;transform:scale(1.02)}.time-result{margin-top:14px;font-weight:950;color:#067244;line-height:1.5}
+.screen-flash{position:fixed;inset:0;background:radial-gradient(circle at 50% 42%,rgba(15,157,88,.35),transparent 26%),linear-gradient(145deg,#06100d,#10251c 50%,#030604);display:grid;place-items:center;color:white;font-size:clamp(30px,7vw,64px);font-weight:950;z-index:9999;opacity:1;pointer-events:auto;transition:opacity .32s ease,visibility .32s ease}.screen-flash.hide{opacity:0;visibility:hidden;pointer-events:none}.screen-flash span{padding:20px 26px;border:1px solid rgba(112,255,180,.28);border-radius:22px;background:rgba(255,255,255,.045);box-shadow:0 0 60px rgba(15,157,88,.28);background-image:linear-gradient(90deg,#fff,#62f0ad,#35d1ff);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:0 0 34px rgba(15,157,88,.28);animation:glowIn .95s ease both}
+@keyframes floatGift{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}@keyframes shake{0%,100%{transform:translateX(0)}50%{transform:translateX(4px)}}@keyframes glowIn{from{transform:translateY(14px) scale(.94);filter:blur(3px);opacity:.35}to{transform:none;filter:blur(0);opacity:1}}@keyframes bubblePulse{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+@media(max-width:1120px){.game-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:980px){.top{grid-template-columns:1fr}.game-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:620px){.wrap{padding:18px 10px 56px}.hero,.card{padding:18px;border-radius:14px}.game-view{padding:12px;border-radius:14px}.game-grid{grid-template-columns:1fr}.game-top{grid-template-columns:42px minmax(0,1fr) 74px;gap:8px}.game-title h1{font-size:clamp(26px,9vw,38px);line-height:1.02}.icon-btn{width:42px;height:42px}.timer-pill{min-width:0;width:74px;padding:10px 6px;font-size:14px}.status{font-size:14px;display:grid;grid-template-columns:1fr auto;align-items:start}.controls{gap:8px}.btn{min-height:44px;padding:0 15px}.how-grid{grid-template-columns:1fr}.zip-board{border-radius:18px;padding:6px}.memory-board{gap:7px}.streak{gap:6px}.day{font-size:11px;min-height:42px}.time-game{min-height:270px;padding:18px}}
+@media(max-width:380px){.game-top{grid-template-columns:38px minmax(0,1fr) 66px}.icon-btn{width:38px;height:38px}.timer-pill{width:66px;font-size:12px}.game-title .kicker{font-size:10px}.game-title h1{font-size:clamp(23px,8.4vw,32px)}.status{font-size:12.5px}.btn{min-height:40px;padding:0 12px}}
+</style>
+</head>
+<body>
+{% include 'header.html' %}
+<div class="screen-flash" id="flash"><span>Healthify Games</span></div>
+<main class="wrap">
+    <section class="hero" id="hubHero">
+        <div class="kicker">Focused wellness games</div>
+        <h1>Healthify Games</h1>
+        <p class="sub">Choose one game, play with focus, and compete with your own best score. Each game allows two attempts per day and refreshes after midnight.</p>
+    </section>
+    <section class="top" id="hubTop">
+        <div class="card">
+            <h2>Daily Streak</h2>
+            <p class="sub">Play one Healthify game daily to keep your weekly rhythm alive.</p>
+            <div class="streak" id="streak"></div>
+        </div>
+        <div class="card">
+            <h2>Day 7 Surprise Box</h2>
+            <div class="gift" onclick="openGift()">🎁</div>
+            <p class="result" id="giftText">Complete a 7-day streak to unlock a wellness message.</p>
+        </div>
+    </section>
+    <section class="game-grid" id="gameGrid"></section>
+
+    <section class="game-view" id="gameView">
+        <div class="game-top">
+            <button class="icon-btn" onclick="showHub()" aria-label="Back to games">‹</button>
+            <div class="game-title">
+                <div class="kicker">Healthify Game</div>
+                <h1 id="gameTitle">Game</h1>
+            </div>
+            <div class="timer-pill" id="gameTimer">0.0s</div>
+        </div>
+        <div class="status"><span id="gameStatus">Ready</span><span id="attemptText">0/2 attempts</span></div>
+        <div class="controls" id="gameControls">
+            <button class="btn" id="startBtn" onclick="startCurrent()">Start</button>
+            <button class="btn dark" onclick="resetCurrent()">Reset</button>
+        </div>
+        <div id="gameArea"></div>
+        <div class="result" id="gameResult"></div>
+        <div class="how-panel" id="howPanel"></div>
+    </section>
+</main>
+<script>
+const games=[
+  ["zip","Zip Focus","Connect numbers in order and fill every cell.","a1","Z"],
+  ["memory","Memory Match","Find matching hidden cards with fresh daily modes.","a2","M"],
+  ["breath","Breath Balance","Follow a gentle breathing rhythm safely.","a3","B"],
+  ["focus","Focus Grid","Tap 1 to 16 in order as quickly as possible.","a4","F"],
+  ["reaction","Cat Reaction","Catch the cat when it appears from random boxes.","a5","😺"]
+];
+games.push(["time","Time Stop Challenge","Stop the hidden timer as close to the target as possible.","a6","T"]);
+let stats=JSON.parse(localStorage.getItem("healthifyGameStatsV2")||'{"streak":0,"plays":0,"last":"","scores":{},"attempts":{},"dailyScores":{}}');
+let current="",timerId=null,startedAt=0,expected=1,drag=false,zipTarget=1,zipTrail=[],zipDone=false,zipLevel=null,gameFinished=false;
+let memoryOpen=[],memoryMoves=0,catTimer=null,catActive=-1,catHits=0,catShows=0,breathTimer=null;
+let timeTarget=7,timeArmed=false,timeStarted=0,timeCountdown=null;
+const memoryLayouts=[
+  {name:"3x3 Focus",rows:3,cols:3,pairs:4},
+  {name:"4x3 Sprint",rows:3,cols:4,pairs:6},
+  {name:"3x4 Sprint",rows:4,cols:3,pairs:6},
+  {name:"4x4 Classic",rows:4,cols:4,pairs:8},
+  {name:"5x5 Expert",rows:5,cols:5,pairs:12}
+];
+const memoryModes=[
+  {name:"Letter Match",items:["A","B","C","D","E","F","G","H","J","K","L","M","N","P","R","S"]},
+  {name:"Health Icon Match",items:["💧","🍎","🥦","🏃","💪","😴","🧘","❤️","🚴","🥛","🌿","🫁","🧠","🥗","☀️","🛡️"]},
+  {name:"Country Match",items:["IN","US","JP","UK","AU","CA","FR","BR","AE","SG","KR","DE","IT","ES","NZ","TH"]},
+  {name:"Emoji Match",items:["😊","😴","💪","🏃","❤️","🌿","✨","🧘","💧","🍎","☀️","🎯","🔥","🌙","⭐","🛡️"]},
+  {name:"Wellness Symbol Match",items:["H2O","Zzz","Run","Fit","Calm","Meal","Sun","Mind","Rest","Core","Flex","Care","Fuel","Walk","Mood","Heart"]}
+];
+const how={
+  zip:[["Connect the dots in order","Start from 1, drag through the board, then reach the final number."],["Fill every cell","Only side-to-side or up-down movement is valid. The path cannot jump or cross walls."]],
+  memory:[["Open two cards","If both cards match, they stay open and glow."],["Beat your best","Use fewer moves and less time to improve your record."]],
+  breath:[["Breathe gently","Follow inhale, hold gently, exhale, and rest without forcing."],["Safety first","Stop immediately if dizzy, breathless, pregnant, cardiac/asthma patient, or uncomfortable."]],
+  focus:[["Tap in order","Find and tap 1 to 16 without skipping any number."],["Stay calm","Speed matters, but accuracy keeps your time clean."]],
+  reaction:[["Watch the boxes","The cat appears 10 times from random places."],["Tap quickly","Fast accurate taps improve your reaction score."]]
+};
+how.time=[["Start, then estimate","A hidden timer starts after 3-2-1."],["Tap the bubble","Stop within 0.50 seconds of the target to win."]];
+function today(){return new Date().toLocaleDateString("en-CA");}
+function dayKey(id){return today()+":"+id;}
+function attempts(id){return stats.attempts[dayKey(id)]||0;}
+function canPlay(id){return attempts(id)<2;}
+function bestText(id){if(id==="time")return stats.scores[id]!==undefined?`±${stats.scores[id]}s`:"--";return stats.scores[id]?`${stats.scores[id]}s`:"--";}
+function persist(){localStorage.setItem("healthifyGameStatsV2",JSON.stringify(stats));fetch("/save-game-stats",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({streak:stats.streak||0,plays:stats.plays||0,last_played:stats.last||""})}).catch(()=>{});}
+function renderHub(){
+  document.getElementById("gameGrid").innerHTML=games.map(g=>`<button class="game-card" onclick="openGame('${g[0]}')"><div class="art ${g[3]}">${g[4]}</div><div class="game-card-body"><h3>${g[1]}</h3><p class="sub">${g[2]}</p><div class="stat">Attempts: ${attempts(g[0])}/2 | Best: ${bestText(g[0])}</div></div></button>`).join("");
+  document.getElementById("streak").innerHTML=Array.from({length:7},(_,i)=>`<div class="day ${i<(stats.streak||0)?"done":""}">Day ${i+1}</div>`).join("");
+}
+function openGift(){document.getElementById("giftText").textContent=(stats.streak||0)>=7?"Surprise: protect 10 focused minutes today. Your consistency is becoming real momentum.":"Reach day 7 to unlock your Healthify wellness surprise.";}
+function showFlash(text="Healthify Games"){const f=document.getElementById("flash");f.querySelector("span").textContent=text;f.classList.remove("hide");}
+function hideFlash(ms=900){setTimeout(()=>document.getElementById("flash")?.classList.add("hide"),ms);}
+function gameRunning(){return current&&startedAt&&!gameFinished;}
+function confirmExit(){return !gameRunning()||confirm("Your game is running. Are you sure you want to exit this game?");}
+function openGame(id,skipHistory=false){
+  if(current&&current!==id&&!confirmExit())return;
+  const g=games.find(x=>x[0]===id);
+  showFlash(g[1]);
+  setTimeout(()=>{
+    current=id;
+    document.getElementById("hubHero").style.display="none";document.getElementById("hubTop").style.display="none";document.getElementById("gameGrid").style.display="none";document.getElementById("gameView").classList.add("open");
+    document.getElementById("gameTitle").textContent=g[1];
+    if(!skipHistory)history.pushState({game:id},"",`/games#${id}`);
+    resetCurrent();
+    window.scrollTo({top:0,behavior:"smooth"});
+    hideFlash(360);
+  },420);
+}
+function showHub(skipHistory=false){
+  if(!confirmExit())return;
+  clearTimers();current="";
+  document.getElementById("gameView").classList.remove("open");document.getElementById("hubHero").style.display="block";document.getElementById("hubTop").style.display="grid";document.getElementById("gameGrid").style.display="grid";
+  if(!skipHistory&&location.hash)history.pushState({hub:true},"","/games");
+  renderHub();window.scrollTo({top:0,behavior:"smooth"});
+}
+function updateAttempts(){document.getElementById("attemptText").textContent=`${attempts(current)}/2 attempts`;document.getElementById("startBtn").disabled=!canPlay(current);}
+function setHow(id){document.getElementById("howPanel").innerHTML=`<div class="how-title">How to play</div><div class="how-grid">${how[id].map(x=>`<div class="how-card"><strong>${x[0]}</strong><br>${x[1]}</div>`).join("")}</div>${id==="breath"?'<div class="safe">Healthify games are for positive engagement and awareness only. They are not diagnostic tools and do not replace professional care.</div>':""}`;}
+function clearTimers(){clearInterval(timerId);clearTimeout(catTimer);clearInterval(breathTimer);clearInterval(timeCountdown);timerId=null;startedAt=0;gameFinished=false;timeArmed=false;window.onpointerup=null;}
+function startTimer(){startedAt=performance.now();clearInterval(timerId);timerId=setInterval(()=>{document.getElementById("gameTimer").textContent=((performance.now()-startedAt)/1000).toFixed(1)+"s";},100);}
+function stopSeconds(){clearInterval(timerId);return Number(((performance.now()-startedAt)/1000).toFixed(1));}
+function markComplete(seconds){
+  gameFinished=true;
+  const id=current,dk=dayKey(id);stats.attempts[dk]=attempts(id)+1;
+  if(!stats.dailyScores[dk]||seconds<stats.dailyScores[dk])stats.dailyScores[dk]=seconds;
+  if(!stats.scores[id]||seconds<stats.scores[id])stats.scores[id]=seconds;
+  const t=today();if(stats.last!==t){stats.streak=Math.min(7,(stats.streak||0)+1);stats.last=t}
+  stats.plays=(stats.plays||0)+1;persist();updateAttempts();renderHub();
+  document.getElementById("gameResult").textContent=`Completed in ${seconds}s. Personal best: ${bestText(id)}. Daily best: ${stats.dailyScores[dk]}s.`;
+}
+function markTimeComplete(actual,diff,win){
+  gameFinished=true;clearInterval(timerId);
+  const id=current,dk=dayKey(id);stats.attempts[dk]=attempts(id)+1;
+  if(stats.dailyScores[dk]===undefined||diff<stats.dailyScores[dk])stats.dailyScores[dk]=diff;
+  if(stats.scores[id]===undefined||diff<stats.scores[id])stats.scores[id]=diff;
+  const t=today();if(stats.last!==t){stats.streak=Math.min(7,(stats.streak||0)+1);stats.last=t}
+  stats.plays=(stats.plays||0)+1;persist();updateAttempts();renderHub();
+  document.getElementById("gameTimer").textContent=actual.toFixed(2)+"s";
+  document.getElementById("gameResult").textContent=`${win?"Win":"Better luck next time"} - stopped at ${actual.toFixed(2)}s. Difference: ±${diff.toFixed(2)}s. Best: ${bestText("time")}.`;
+}
+function resetCurrent(){
+  clearTimers();document.getElementById("gameTimer").textContent="0.0s";document.getElementById("gameResult").textContent="";document.getElementById("gameStatus").textContent=canPlay(current)?"Ready":"Today's two attempts are complete.";updateAttempts();setHow(current);
+  if(current==="zip")setupZip();if(current==="memory")setupMemory();if(current==="breath")setupBreath();if(current==="focus")setupFocus();if(current==="reaction")setupReaction();if(current==="time")setupTime();
+}
+function startCurrent(){if(!canPlay(current))return;if(current==="zip")startZip();if(current==="memory")startMemory();if(current==="breath")startBreath();if(current==="focus")startFocus();if(current==="reaction")startReaction();if(current==="time")startTime();}
+function seededRand(seed){let x=0;for(const c of seed)x=(x*31+c.charCodeAt(0))>>>0;return()=>{x=(x*1664525+1013904223)>>>0;return x/4294967296;};}
+function snakePath(size,variant){
+  let rows=[...Array(size).keys()], cells=[];
+  if(variant%2)rows.reverse();
+  rows.forEach((r,ri)=>{let cols=[...Array(size).keys()];if((ri+variant)%2)cols.reverse();cols.forEach(c=>cells.push(r*size+c));});
+  if(variant%3===0)cells=cells.map(n=>(n%size)*size+Math.floor(n/size));
+  if(variant%5===0)cells.reverse();
+  return cells;
+}
+function zipColor(index,total){
+  const t=total<=1?0:index/(total-1),a=[15,157,88],b=t<.55?[20,184,166]:[10,102,194],m=t<.55?t/.55:(t-.55)/.45,from=t<.55?a:[20,184,166];
+  const rgb=from.map((v,i)=>Math.round(v+(b[i]-v)*m));
+  return `linear-gradient(135deg,rgb(${rgb.join(",")}),rgba(${rgb.join(",")},.82))`;
+}
+function makeZipLevel(){
+  const size=7,rnd=seededRand(today()+"zip-free"+attempts("zip")+Math.random()),variant=Math.floor(rnd()*30),guide=snakePath(size,variant);
+  const marks=[0,6,13,20,28,35,42,48],labels={},labelCells={};marks.forEach((p,i)=>{labels[guide[p]]=i+1;labelCells[i+1]=guide[p];});
+  const difficulty=["Easy","Medium","Hard","Expert"][Math.floor(rnd()*4)];
+  return {size,labels,labelCells,difficulty,hints:2,moves:0,visited:new Set()};
+}
+function setupZip(){
+  zipTarget=1;zipTrail=[];zipDone=false;zipLevel=makeZipLevel();
+  document.getElementById("gameControls").innerHTML=`<button class="btn" id="startBtn" onclick="startCurrent()">Start</button><button class="btn dark" onclick="resetCurrent()">Reset</button><button class="btn light" onclick="undoZip()">Undo</button><button class="btn light" onclick="hintZip()">Hint</button>`;
+  updateAttempts();
+  document.getElementById("gameArea").innerHTML=`<div class="zip-shell"><div class="zip-board" id="zipBoard">${Array.from({length:49},(_,i)=>`<div class="zip-cell" data-cell="${i}">${zipLevel.labels[i]?`<span class="zip-dot">${zipLevel.labels[i]}</span>`:""}</div>`).join("")}</div></div>`;
+  const board=document.getElementById("zipBoard");
+  board.querySelectorAll(".zip-cell").forEach(c=>{c.onpointerdown=e=>{e.preventDefault();e.stopPropagation();if(!startedAt)return;drag=true;try{board.setPointerCapture(e.pointerId)}catch(_e){};takeZip(c)};});
+  board.onpointermove=e=>{if(!drag||!startedAt)return;e.preventDefault();e.stopPropagation();const el=document.elementFromPoint(e.clientX,e.clientY);const cell=el&&el.closest?el.closest(".zip-cell"):null;if(cell&&board.contains(cell))takeZip(cell);};
+  const end=e=>{drag=false;try{board.releasePointerCapture(e.pointerId)}catch(_e){}};
+  board.onpointerup=end;board.onpointercancel=end;window.onpointerup=()=>{drag=false};
+}
+function startZip(){resetCurrent();startTimer();document.getElementById("gameStatus").textContent=`${zipLevel.difficulty} puzzle. Start from 1, connect numbers in order, and use every cell.`;}
+function zipSolid(index,total){
+  const t=total<=1?0:index/(total-1),start=[15,157,88],mid=[20,184,166],end=[10,102,194],from=t<.55?start:mid,to=t<.55?mid:end,m=t<.55?t/.55:(t-.55)/.45;
+  return `rgb(${from.map((v,i)=>Math.round(v+(to[i]-v)*m)).join(",")})`;
+}
+function isZipAdjacent(a,b){const s=7,ar=Math.floor(a/s),ac=a%s,br=Math.floor(b/s),bc=b%s;return Math.abs(ar-br)+Math.abs(ac-bc)===1;}
+function takeZip(c){
+  if(zipDone)return;const val=Number(c.dataset.cell);
+  if(!zipTrail.length&&zipLevel.labels[val]!==1){c.classList.add("bad");setTimeout(()=>c.classList.remove("bad"),180);document.getElementById("gameStatus").textContent="Start from number 1.";return;}
+  if(zipTrail.length>1&&val===Number(zipTrail[zipTrail.length-2].dataset.cell)){undoZip();return;}
+  if(zipTrail.length){
+    const last=Number(zipTrail[zipTrail.length-1].dataset.cell);
+    if(val===last)return;
+    if(!isZipAdjacent(last,val)||zipLevel.visited.has(val)){c.classList.add("bad");setTimeout(()=>c.classList.remove("bad"),180);return;}
+  }
+  const label=zipLevel.labels[val]||0;
+  if(label&&label!==zipTarget){c.classList.add("bad");setTimeout(()=>c.classList.remove("bad"),180);document.getElementById("gameStatus").textContent=`Connect number ${zipTarget} before ${label}.`;return;}
+  c.style.setProperty("--zip-solid",zipSolid(zipTrail.length,49));c.classList.add("active");zipTrail.push(c);zipLevel.visited.add(val);zipLevel.moves++;
+  if(label===zipTarget){zipTarget++;document.getElementById("gameStatus").textContent=zipTarget<=8?`Good. Now connect number ${zipTarget}.`:"Now fill every remaining cell to complete Zip.";}
+  if(zipTarget>8&&zipTrail.length===49){zipDone=true;if(navigator.vibrate)navigator.vibrate(80);markComplete(stopSeconds());document.getElementById("gameResult").textContent+=` Moves: ${zipLevel.moves}. Difficulty: ${zipLevel.difficulty}.`;}
+  return;
+}
+function undoZip(){if(!zipTrail.length||zipDone)return;const c=zipTrail.pop(),val=Number(c.dataset.cell),label=zipLevel.labels[val]||0;c.classList.remove("active");c.style.removeProperty("--zip-solid");zipLevel.visited.delete(val);if(label&&label===zipTarget-1)zipTarget=label;document.getElementById("gameStatus").textContent="Undo used. Continue from the last connected cell.";}
+function hintZip(){if(!zipLevel||zipLevel.hints<=0){document.getElementById("gameStatus").textContent="No hints left for this puzzle.";return;}const next=zipLevel.labelCells[zipTarget];const c=document.querySelector(`.zip-cell[data-cell="${next}"]`);if(c){zipLevel.hints--;c.classList.add("hint");setTimeout(()=>c.classList.remove("hint"),900);document.getElementById("gameStatus").textContent=`Next checkpoint highlighted. Hints left: ${zipLevel.hints}. Choose your own path to reach it.`;}}
+function memoryConfig(){
+  const rnd=seededRand(today()+"memory"+attempts("memory")+Math.random());const mode=memoryModes[Math.floor(rnd()*memoryModes.length)];
+  const layout=memoryLayouts[Math.floor(rnd()*memoryLayouts.length)];return{mode,layout,pairs:layout.pairs,rnd};
+}
+function setupMemory(){
+  memoryOpen=[];memoryMoves=0;const cfg=memoryConfig();const chosen=[...cfg.mode.items].sort(()=>cfg.rnd()-.5).slice(0,cfg.pairs);let deck=[...chosen,...chosen].sort(()=>cfg.rnd()-.5);
+  const total=cfg.layout.rows*cfg.layout.cols;if(deck.length<total)deck.splice(Math.floor(cfg.rnd()*total),0,"LOCK");
+  document.getElementById("gameControls").innerHTML=`<button class="btn" id="startBtn" onclick="startCurrent()">Start</button><button class="btn dark" onclick="resetCurrent()">Reset</button>`;updateAttempts();
+  document.getElementById("gameStatus").textContent=`${cfg.mode.name} - ${cfg.layout.name} - Moves: 0`;
+  document.getElementById("gameArea").innerHTML=`<div class="memory-board" style="--cols:${cfg.layout.cols};max-width:${Math.min(520,cfg.layout.cols*104)}px">${deck.map(x=>x==="LOCK"?`<button class="mem-card locked" disabled>H</button>`:`<button class="mem-card" data-v="${x}" aria-label="Memory card"></button>`).join("")}</div>`;
+  document.querySelectorAll(".mem-card:not(.locked)").forEach(t=>t.onclick=()=>flipMemory(t,cfg.pairs));
+}
+function startMemory(){resetCurrent();startTimer();document.getElementById("gameStatus").textContent=document.getElementById("gameStatus").textContent.replace("Ready","Find matching cards");}
+function flipMemory(t,pairs){
+  if(!startedAt||t.classList.contains("matched")||t.classList.contains("open")||memoryOpen.length>=2)return;
+  t.textContent=t.dataset.v;t.classList.add("open");memoryOpen.push(t);
+  if(memoryOpen.length===2){memoryMoves++;document.getElementById("gameStatus").textContent=document.getElementById("gameStatus").textContent.replace(/Moves: \d+/,"Moves: "+memoryMoves);setTimeout(()=>{const ok=memoryOpen[0].dataset.v===memoryOpen[1].dataset.v;if(ok){memoryOpen.forEach(x=>{x.classList.remove("open");x.classList.add("matched")});if(document.querySelectorAll(".mem-card.matched").length===pairs*2){const sec=stopSeconds();markComplete(sec);document.getElementById("gameResult").textContent+=` Moves: ${memoryMoves}.`;}}else{memoryOpen.forEach(x=>{x.textContent="";x.classList.remove("open")});}memoryOpen=[];},520);}
+}
+function setupFocus(){
+  expected=1;const nums=Array.from({length:16},(_,i)=>i+1).sort(()=>Math.random()-.5);
+  document.getElementById("gameControls").innerHTML=`<button class="btn" id="startBtn" onclick="startCurrent()">Start</button><button class="btn dark" onclick="resetCurrent()">Reset</button>`;updateAttempts();
+  document.getElementById("gameArea").innerHTML=`<div class="focus-board">${nums.map(n=>`<button class="focus-tile" onclick="tapFocus(this,${n})">${n}</button>`).join("")}</div>`;
+}
+function startFocus(){resetCurrent();startTimer();document.getElementById("gameStatus").textContent="Tap 1 to 16 in order.";}
+function tapFocus(t,n){if(!startedAt)return;if(n!==expected){t.classList.add("bad");setTimeout(()=>t.classList.remove("bad"),180);return;}t.classList.add("active");expected++;if(expected>16)markComplete(stopSeconds());}
+function setupReaction(){
+  clearTimeout(catTimer);catActive=-1;catHits=0;catShows=0;
+  document.getElementById("gameControls").innerHTML=`<button class="btn" id="startBtn" onclick="startCurrent()">Start</button><button class="btn dark" onclick="resetCurrent()">Reset</button>`;updateAttempts();
+  document.getElementById("gameArea").innerHTML=`<div class="cat-grid">${Array.from({length:9},(_,i)=>`<button class="cat-hole" onclick="tapCat(${i})"></button>`).join("")}</div>`;
+  document.getElementById("gameResult").textContent="Cat will appear 10 times. Tap quickly when it appears.";
+}
+function startReaction(){resetCurrent();startTimer();document.getElementById("gameStatus").textContent="Catch the cat quickly.";setTimeout(showCat,450);}
+function showCat(){
+  document.querySelectorAll(".cat-hole").forEach(x=>{x.classList.remove("up");x.textContent=""});
+  if(catShows>=10){const sec=stopSeconds();markComplete(sec);document.getElementById("gameResult").textContent=`Cat hits: ${catHits}/10. Time: ${sec}s. Personal best: ${bestText("reaction")}.`;return;}
+  catActive=Math.floor(Math.random()*9);const holes=document.querySelectorAll(".cat-hole");holes[catActive].classList.add("up");holes[catActive].textContent="😺";catShows++;
+  catTimer=setTimeout(()=>{catActive=-1;showCat()},420+Math.random()*360);
+}
+function tapCat(i){if(catActive===i){catHits++;catActive=-1;document.getElementById("gameResult").textContent=`Cat hits: ${catHits}/10`;clearTimeout(catTimer);showCat();}}
+function setupBreath(){
+  document.getElementById("gameControls").innerHTML=`<button class="btn" id="startBtn" onclick="startCurrent()">Start</button><button class="btn dark" onclick="resetCurrent()">Reset</button>`;updateAttempts();
+  document.getElementById("gameArea").innerHTML='<div class="breath-circle" id="breathCircle">Ready</div>';
+}
+function startBreath(){
+  resetCurrent();startTimer();let i=0;const steps=["Inhale","Hold gently","Exhale","Rest"],c=document.getElementById("breathCircle");document.getElementById("gameStatus").textContent="Follow the safe rhythm.";
+  breathTimer=setInterval(()=>{const step=steps[i%4];c.textContent=step;c.classList.toggle("big",step==="Inhale");i++;if(i>=10){clearInterval(breathTimer);markComplete(stopSeconds());}},3000);
+}
+function setupTime(){
+  const targets=[5,7,9,12],rnd=seededRand(today()+"time"+attempts("time"));timeTarget=targets[Math.floor(rnd()*targets.length)];
+  document.getElementById("gameControls").innerHTML=`<button class="btn" id="startBtn" onclick="startCurrent()">Start</button><button class="btn dark" onclick="resetCurrent()">Reset</button>`;updateAttempts();
+  document.getElementById("gameTimer").textContent="Hidden";
+  document.getElementById("gameStatus").textContent=`Stop within ±0.50s of ${timeTarget}s.`;
+  document.getElementById("gameArea").innerHTML=`<div class="time-game"><div><div class="time-target">Stop at ${timeTarget} seconds</div><div class="time-sub">Timer will be hidden. Tap the bubble when your instinct says now.</div></div><button class="time-bubble wait" id="timeBubble" type="button" onclick="tapTime()">Ready</button><div class="time-result" id="timeResult">Press Start to begin the countdown.</div></div>`;
+}
+function startTime(){
+  resetCurrent();let n=3;const b=document.getElementById("timeBubble"),r=document.getElementById("timeResult");
+  document.getElementById("gameStatus").textContent="Countdown started. Get ready.";
+  b.classList.add("wait");b.classList.remove("reveal");b.textContent=n;r.textContent="Focus on the target. Timer will stay hidden.";
+  timeCountdown=setInterval(()=>{n--;if(n>0){b.textContent=n;return;}clearInterval(timeCountdown);b.classList.remove("wait");b.textContent="Tap";timeArmed=true;startedAt=performance.now();timeStarted=startedAt;document.getElementById("gameStatus").textContent=`Hidden timer running. Stop near ${timeTarget}s.`;},850);
+}
+function tapTime(){
+  if(!timeArmed||gameFinished)return;
+  const actual=(performance.now()-timeStarted)/1000,diff=Math.abs(actual-timeTarget),win=diff<=.5;
+  timeArmed=false;const b=document.getElementById("timeBubble"),r=document.getElementById("timeResult");
+  b.classList.add("reveal");b.textContent=actual.toFixed(2)+"s";r.textContent=win?"Excellent timing. You stopped inside the target window.":"Close try. Reset your feel and try again tomorrow.";
+  if(navigator.vibrate)navigator.vibrate(win?[40,40,80]:40);
+  markTimeComplete(actual,Number(diff.toFixed(2)),win);
+}
+document.addEventListener("touchmove",e=>{if(e.target.closest("#gameArea"))e.preventDefault();},{passive:false});
+document.addEventListener("dragstart",e=>{if(e.target.closest("#gameArea"))e.preventDefault();});
+window.addEventListener("popstate",()=>{if(current){if(confirmExit())showHub(true);else history.pushState({game:current},"",`/games#${current}`);}else if(location.hash)openGame(location.hash.slice(1),true);});
+document.addEventListener("click",e=>{const a=e.target.closest("a");if(a&&gameRunning()&&!a.href.includes("/games")&&!confirmExit())e.preventDefault();},true);
+const healthifyGo=window.hfGo;
+window.hfGo=function(event,url,instant){
+  if(gameRunning()&&!confirmExit()){if(event)event.preventDefault();return false;}
+  return healthifyGo?healthifyGo(event,url,instant):(window.location.href=url,false);
+};
+window.addEventListener("load",()=>hideFlash(1100));
+renderHub();
+if(location.hash)openGame(location.hash.slice(1),true);
+</script>
+</body>
+</html>

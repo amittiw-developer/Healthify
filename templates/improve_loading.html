@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analyzing Your Body • Healthify</title>
+
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+<style>
+
+body{
+    margin:0;
+    font-family:"Segoe UI",Arial;
+    background:linear-gradient(#eef3f1,#e6f4ee);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+    text-align:center;
+}
+
+.card{
+    background:white;
+    padding:40px 28px;
+    border-radius:20px;
+    box-shadow:0 15px 40px rgba(0,0,0,0.08);
+    width:90%;
+    max-width:420px;
+}
+
+.loader{
+    width:70px;
+    height:70px;
+    border:6px solid #e5e7eb;
+    border-top:6px solid #0F9D58;
+    border-radius:50%;
+    margin:auto;
+    animation:spin 1s linear infinite;
+}
+
+@keyframes spin{
+    to{ transform:rotate(360deg); }
+}
+
+.title{
+    font-size:22px;
+    font-weight:600;
+    color:#0F9D58;
+    margin-top:20px;
+}
+
+.subtitle{
+    font-size:14px;
+    color:#6b7280;
+    margin-top:10px;
+    min-height:20px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+<div class="loader"></div>
+
+<div class="title">Analyzing your body signals</div>
+<div class="subtitle" id="text">Reading lifestyle patterns...</div>
+
+</div>
+
+<script>
+
+const messages = [
+"Checking recovery indicators...",
+"Matching symptoms with real patterns...",
+"Understanding energy levels...",
+"Preparing personalized guidance..."
+];
+
+let i=0;
+setInterval(()=>{
+    document.getElementById("text").innerText = messages[i%messages.length];
+    i++;
+},1400);
+
+// redirect after animation
+setTimeout(()=>{
+    window.location.href="/improve-plan";
+},4200);
+
+</script>
+
+</body>
+</html>
