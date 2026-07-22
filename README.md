@@ -65,4 +65,4 @@ If you want to run the app locally on your machine:
    The app will run at `http://localhost:5000`.
 
 ---
-*Built with ❤️ for the OpenAI Build Week Thanks for reading!*
+*Built with ❤️ for the OpenAI Build Week. Thanks for reading!*
